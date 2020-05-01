@@ -1,3 +1,24 @@
-# info478_final
-hi everyone 
-go vaccines!!!
+# info478 Project Proposal
+Azim Wahid, Hannah Chung, Michelle To, Jamie Costales
+
+## Project Description: Vaccines
+**Purpose:** The purpose of our research project is to explore and gain insight about the prevalence and/or lack of vaccinations in certain populations and regions within, or outside of, the United States. By knowing the presence or lack of vaccination rates within regions and populations one could be able to determine the need for more policy or interventions to enforce vaccinations for the well being of the public.
+
+**Research in the Area:**
+- [Immunization in the United States: Recommendations, Barriers, and Measures to Improve Compliance](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4927017/):
+
+- [Surveillance of Vaccination Coverage among Adult Populations — United States, 2015](https://www.cdc.gov/mmwr/volumes/65/ss/ss6501a1.htm): This study is an investigation and review of the annual cross-sectional study done by the National Health Interview Survey (NHIS) compiling vaccination data from U.S. households. Coverage for all vaccines for adults remained low but modest gains occurred in vaccination coverage for influenza , pneumococcal , Tdap , herpes zoster , and hepatitis B; coverage for other vaccines and groups with vaccination indications did not improve. Racial/ethnic disparities persisted for routinely recommended adult vaccines with white populations covered the most.
+
+- [Nonmedical Exemptions From School Immunization Requirements: A Systematic Review](https://www-ncbi-nlm-nih-gov.offcampus.lib.washington.edu/pmc/articles/PMC4202987/): This study provides a summary regarding the prevalence and trends of nonmedical exemptions (NME) from school vaccination mandates and what it’s meant for the incidences of vaccine preventable diseases. Results showed that NME are increasing and can often be impacted due to their sociodemographic surroundings (ex. Exemption rates are higher in areas with larger proportions of whites and have a college education) Parents also were more likely to opt for a NME when they didn’t feel as if they had enough information about immunization. Parents who were also non-trusting of the government were more likely to file a NME. The exemption rates per state seem to be correlated with how easy it is to obtain NMEs. In regards to incidence rates of vaccine preventable disease, in clusters where there are many parents who opt/file for NMEs, there is a greater outbreak risk and higher incidence rate of diseases that can be prevented with a vaccine. High rates of NMEs can also put those who have gotten vaccines at risk. Discuss prevention strategies and interventions to help address NMEs.
+
+**Datasets:**
+
+**Target Audience:**
+- Policymakers
+- Parents
+- Anti Vaxxer
+- The Immunocompromised
+- General Public
+
+*What  our audience learn from our resource? What are specific questions we can ask?*
+We hope that when our audience views our resource, they can easily digest and understand areas where there are higher or lower vaccination rates and what that may mean to those living there. By providing visuals and analysis, we hope to educate policymakers, parents, anti-vaxxers, and the general public on the effects of vaccination/no vaccinations and to also provide a call to action to areas that may be experiencing higher than normal rates of infection from disease that may have been preventable by vaccine.
