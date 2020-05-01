@@ -12,7 +12,14 @@ The purpose of our research project is to explore and gain insight about the pre
 
 - [Nonmedical Exemptions From School Immunization Requirements: A Systematic Review](https://www-ncbi-nlm-nih-gov.offcampus.lib.washington.edu/pmc/articles/PMC4202987/): This study provides a summary regarding the prevalence and trends of nonmedical exemptions (NME) from school vaccination mandates and what it’s meant for the incidences of vaccine preventable diseases. Results showed that NME are increasing and can often be impacted due to their sociodemographic surroundings (ex. Exemption rates are higher in areas with larger proportions of whites and have a college education) Parents also were more likely to opt for a NME when they didn’t feel as if they had enough information about immunization. Parents who were also non-trusting of the government were more likely to file a NME. The exemption rates per state seem to be correlated with how easy it is to obtain NMEs. In regards to incidence rates of vaccine preventable disease, in clusters where there are many parents who opt/file for NMEs, there is a greater outbreak risk and higher incidence rate of diseases that can be prevented with a vaccine. High rates of NMEs can also put those who have gotten vaccines at risk. Discuss prevention strategies and interventions to help address NMEs.
 
+- [A mid-term assessment of progress towards the immunization coverage goal of the Global Immunization Vision and Strategy (GIVS)](https://bmcpublichealth.biomedcentral.com/articles/10.1186/1471-2458-11-806): This is a straight-forward assessment of progress made towards a global immunization coverage goal via the Global Immunization Vision and Strategy (GIVS). There has been progress made, but some countries have made little to no progress at all. This should be addressed as an average global vaccine coverage can prevent future epi/pandemics.
+
 ### Datasets:
+- [WA State K-12 Immunization Data 2014-2015](https://catalog.data.gov/dataset/immunization-data-for-all-students-kindergarten-through-12th-grade-2014-2015-school-year)
+- [WA State K-12 Immunization Data 2015-2016](https://catalog.data.gov/dataset/all-students-kindergarten-through-12th-grade-immunization-data-by-school-2015-2016)
+- [WA State K-12 Immunization Data 2016-2017](https://catalog.data.gov/dataset/all-students-kindergarten-through-12th-grade-immunization-data-by-school-2016-2017)
+- [Other Immunization Data](https://catalog.data.gov/dataset?tags=immunization&page=1)
+- [Global Immunization Data](https://data.unicef.org/resources/dataset/immunization/)
 
 ### Target Audience:
 - Policymakers
