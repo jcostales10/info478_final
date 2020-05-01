@@ -1,5 +1,5 @@
 # info478 Project Proposal
-Azim Wahid, Hannah Chung, Michelle To, Jamie Costales
+Azim Abdul Wahid, Hannah Chung, Michelle To, Jamie Costales
 
 ## Project Description: Vaccines
 ### Purpose:
