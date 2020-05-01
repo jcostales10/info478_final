@@ -26,7 +26,7 @@ The purpose of our research project is to explore and gain insight about the pre
 
 - [WHO Immunization Coverage](https://www.who.int/news-room/fact-sheets/detail/immunization-coverage)
 - [Our World In Data](https://ourworldindata.org/vaccination)
-- [CDC Vaccomes & Immunizations](https://www.cdc.gov/vaccines/)
+- [CDC Vaccines & Immunizations](https://www.cdc.gov/vaccines/)
 
 ### Target Audience:
 - Policymakers
