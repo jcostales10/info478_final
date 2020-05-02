@@ -21,8 +21,9 @@ The purpose of our research project is to explore and gain insight about the pre
 - [Other Immunization Data](https://catalog.data.gov/dataset?tags=immunization&page=1)
 - [Global Immunization Data](https://data.unicef.org/resources/dataset/immunization/)
 - [Vaccination Coverage for Selected Diseases Amongst Children](https://www.cdc.gov/nchs/data/hus/2018/031.pdf)
+- [Healthcare Personnel Influenza Vaccination](https://healthdata.gov/dataset/esrd-qip-national-healthcare-safety-network-healthcare-personnel-influenza-vaccination)
 
-### Supplemental Information About Vaccines: 
+### Supplemental Information About Vaccines:
 
 - [WHO Immunization Coverage](https://www.who.int/news-room/fact-sheets/detail/immunization-coverage)
 - [Our World In Data](https://ourworldindata.org/vaccination)
@@ -44,20 +45,20 @@ From our research project we hope that our audience can gain insight about the i
 - What places have certain exemptions?
 - Are there certain outbreak patterns in areas with lower vaccination rates?
 - Why might certain areas have the vaccination patterns they have? (outside research)
-- Are there any other discrepancies in vaccination rates other than region? 
+- Are there any other discrepancies in vaccination rates other than region?
 
 # Technical Logistics
 
-**Format of Final Product:** 
-As of the current moment we hope to host our final project through a Shiny app, however we are still evaluating other viable options. 
+**Format of Final Product:**
+As of the current moment we hope to host our final project through a Shiny app, however we are still evaluating other viable options.
 
 **Do you anticipate any specific data collection / data management challenges?**
 -  The data may not be ‘clean’ enough to use off the bat so we may have to figure out the best way to clean it that allows us to use the data
 - Different datasets seem to be measuring the same general concept but use different metric scales
-- Datasets are very large and contain a lot of information, many datasets come along with a reading to help understand them since they are not clean and cut 
+- Datasets are very large and contain a lot of information, many datasets come along with a reading to help understand them since they are not clean and cut
 
 **What new technical skills will need to learn in order to complete your project?**
-- Our team will need to brush up on overall R skills in order to effectively and efficiently manage datasets this includes mastering how to access dataframes and how to alter them 
+- Our team will need to brush up on overall R skills in order to effectively and efficiently manage datasets this includes mastering how to access dataframes and how to alter them
 
 **What major challenges do you anticipate?**
 - Coordinating pushes/pulls to minimize overlapping and/or errors when committing since we are not yet fully commited to enable merge requests to avoid this challenge
