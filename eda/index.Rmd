@@ -1,6 +1,6 @@
 ---
 title: "Exploratory Analysis"
-author: "Azim Wahid, Hannah Chung, Michelle To, Jamie Costales"
+author: "Azim Abdul Wahid, Hannah Chung, Michelle To, Jamie Costales"
 date: "5/17/2020"
 output: html_document
 ---
@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 source("../scripts/enrollment.R")
-
+source("../scripts/exemptions.R")
 
 library(ggplot2)
 library(shiny)
@@ -35,4 +35,9 @@ library(plotly)
 enrollment_perc_complete_plotly
 ```
 
+## Tally of Different Exemptions
+
+```{r exemptions, echo=FALSE}
+exemption_vis
+```
 

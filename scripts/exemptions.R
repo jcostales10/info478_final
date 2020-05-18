@@ -1,0 +1,43 @@
+library(tidyverse)
+
+vac_2017 <- read.csv("../data/immunization_2017.csv", stringsAsFactors = F)
+
+# Count total of all exemptions
+
+# filter out all the schools not reported and keep necessary columns
+reported_only <- vac_2017 %>%
+  filter(Reported == "Y") %>%
+  select(School_Name, Number_with_any_exemption, Number_with_medical_exemption,
+         Number_with_personal_exemption, Number_with_religious_exemption,
+         Number_with_religious_membership_exemption)
+
+
+# calculate sum of exemptions and rename columns
+exemption_sums <- reported_only %>%
+  summarize(
+    count_any_exemption = sum(Number_with_any_exemption),
+    count_medical_exemption = sum(Number_with_medical_exemption),
+    count_personal_exemption = sum(Number_with_personal_exemption),
+    count_religious_exemption = sum(Number_with_religious_exemption),
+    count_religious_membership_exemption = sum(Number_with_religious_membership_exemption)
+  ) %>%
+  rename("Any exemption" = count_any_exemption) %>%
+  rename("Personal exemption" = count_personal_exemption) %>%
+  rename("Medical exemption" = count_medical_exemption) %>%
+  rename("Religious exemption" = count_religious_exemption) %>%
+  rename("Religious membership exemption" = count_religious_membership_exemption)
+  
+# organized exemption_sums to make it easy to work with
+exemption_summary <- exemption_sums %>%
+  gather(key = "reasons", value = "count", "Any exemption",
+         "Personal exemption", "Medical exemption",
+         "Religious exemption", "Religious membership exemption") %>%
+  arrange(-count)
+
+exemption_vis <- ggplot(data = exemption_summary) +
+  geom_col(mapping = aes(x = reorder(reasons, count), y = count)) +
+  labs(title = "Exemption Count", x = "Reasons", y = "Number of People") +
+  coord_flip()
+
+exemption_vis
+
