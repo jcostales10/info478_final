@@ -35,7 +35,7 @@ library(plotly)
 enrollment_perc_complete_plotly
 ```
 
-## Tally of Different Exemptions
+## Reasons for No Vaccination
 
 ```{r exemptions, echo=FALSE}
 exemption_vis

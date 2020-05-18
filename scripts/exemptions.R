@@ -1,4 +1,5 @@
 library(tidyverse)
+library(plotly)
 
 vac_2017 <- read.csv("../data/immunization_2017.csv", stringsAsFactors = F)
 
@@ -34,10 +35,13 @@ exemption_summary <- exemption_sums %>%
          "Religious exemption", "Religious membership exemption") %>%
   arrange(-count)
 
-exemption_vis <- ggplot(data = exemption_summary) +
-  geom_col(mapping = aes(x = reorder(reasons, count), y = count)) +
-  labs(title = "Exemption Count", x = "Reasons", y = "Number of People") +
-  coord_flip()
+# plotly piechart to display counts and percentages
+exemption_vis <- plot_ly(data = exemption_summary, labels = ~reasons,
+                         values = ~count, type = 'pie')
 
+exemption_vis <- exemption_vis %>%
+  layout(title = 'Exemption Count and Percentages',
+         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 exemption_vis
-
+  
