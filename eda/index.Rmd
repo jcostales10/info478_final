@@ -8,9 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-vac_2017 <- read.csv("info478_final/data/immunization_2017.csv", stringsAsFactors = F)
-
-source("scripts/enrollment.R")
+source("../scripts/enrollment.R")
 
 
 library(ggplot2)
@@ -21,19 +19,17 @@ library(plotly)
 
 ## Introduction
 
-```{r intro, echo=F }
+```{r intro, echo =FALSE }
 
 ```
 
 ## Summary Information
 
-```{r summary, echo=F}
+```{r summary, echo = FALSE}
 
 ```
 
 ## Enrollment and Vaccines
-
-You can also embed plots, for example:
 
 ```{r enrollment, echo=FALSE}
 enrollment_perc_complete_plotly

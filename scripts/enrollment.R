@@ -1,7 +1,7 @@
 library(tidyverse)
 library(plotly)
 
-vac_2017 <- read.csv("info478_final/data/immunization_2017.csv", stringsAsFactors = F)
+vac_2017 <- read.csv("../data/immunization_2017.csv", stringsAsFactors = F)
 
 # filter out all the schools not reported
 reported_only <- vac_2017 %>%
@@ -31,7 +31,7 @@ enrollment_perc_complete <- county_summary_stats %>%
   ggplot + geom_point(mapping = aes(x =  mean_enrollment, y = mean_perc_complete_all_vacinations)) +
   geom_smooth(mapping = aes(x = mean_enrollment, y = mean_perc_complete_all_vacinations), method=lm) +
   labs(
-    title = "Washington K - 12 Enrollment Sizes and Percent Vaccinated with All Vaccines by County",
+    title = "WA K - 12 Enrollment Sizes and Percent Vaccinated with All Vaccines by County",
     x = "Mean School Enrollment Size",
     y = "Mean Percent Complete of All Vacinations"
   )
@@ -54,17 +54,13 @@ y <- list(
 
 
 
-test1 <-  plot_ly(data = county_summary_stats, 
+enrollment_perc_complete_plotly <-  plot_ly(data = county_summary_stats, type="scatter", 
               x = ~mean_enrollment, 
               y = ~mean_perc_complete_all_vacinations,
               mode = "markers",
               text = ~paste("County: ", County)) %>%
   layout(
-    title = "Washington K - 12 Enrollment Sizes and Percent Vaccinated with All Vaccines by County",
+    title = "WA K - 12 Enrollment Sizes and % Vaccinated with All Vaccines by County",
     xaxis = x, 
     yaxis = y)
   
-
-
-test2 <- test %>%
-  add_trace( x = mean_enrollment, y = mean_perc_complete_all_vacinations, mode = "lines")
