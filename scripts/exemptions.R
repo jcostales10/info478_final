@@ -8,7 +8,7 @@ vac_2017 <- read.csv("../data/immunization_2017.csv", stringsAsFactors = F)
 # filter out all the schools not reported and keep necessary columns
 reported_only <- vac_2017 %>%
   filter(Reported == "Y") %>%
-  select(School_Name, Number_with_any_exemption, Number_with_medical_exemption,
+  select(School_Name, Number_with_medical_exemption,
          Number_with_personal_exemption, Number_with_religious_exemption,
          Number_with_religious_membership_exemption)
 
@@ -16,13 +16,11 @@ reported_only <- vac_2017 %>%
 # calculate sum of exemptions and rename columns
 exemption_sums <- reported_only %>%
   summarize(
-    count_any_exemption = sum(Number_with_any_exemption),
     count_medical_exemption = sum(Number_with_medical_exemption),
     count_personal_exemption = sum(Number_with_personal_exemption),
     count_religious_exemption = sum(Number_with_religious_exemption),
     count_religious_membership_exemption = sum(Number_with_religious_membership_exemption)
   ) %>%
-  rename("Any exemption" = count_any_exemption) %>%
   rename("Personal exemption" = count_personal_exemption) %>%
   rename("Medical exemption" = count_medical_exemption) %>%
   rename("Religious exemption" = count_religious_exemption) %>%
@@ -30,7 +28,7 @@ exemption_sums <- reported_only %>%
   
 # organized exemption_sums to make it easy to work with
 exemption_summary <- exemption_sums %>%
-  gather(key = "reasons", value = "count", "Any exemption",
+  gather(key = "reasons", value = "count",
          "Personal exemption", "Medical exemption",
          "Religious exemption", "Religious membership exemption") %>%
   arrange(-count)
@@ -43,5 +41,4 @@ exemption_vis <- exemption_vis %>%
   layout(title = 'Exemption Count and Percentages',
          xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
          yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-exemption_vis
   
