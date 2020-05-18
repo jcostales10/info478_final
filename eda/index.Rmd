@@ -25,17 +25,23 @@ library(plotly)
 
 ```
 
-## Summary Information
+The domain we originally started with was vaccinations. This domain piqued our interest as it’s a public health area that’s currently been getting more coverage especially as groups of anti-vaxxers are on the rise and there is a strong push to get a vaccine for COVID-19. Vaccines are also a public health intervention that can prevent or provide protection against many infections and diseases.
 
-```{r summary, echo = FALSE}
-
-```
+The domain we narrowed our assignment to was vaccinations within K-12 schools in Washington State. The dataset we’re using to gain more insight on this issue within the state is the [WA State K-12 Immunization Data 2016-2017](https://catalog.data.gov/dataset/all-students-kindergarten-through-12th-grade-immunization-data-by-school-2016-2017). It includes all the schools within the state and information on items such as the school population, location, percentage of vaccination exemptions (and what kind), percentage of how many students have all vaccinations, and much more. The data was downloaded from Data.gov which is managed and hosted by the U.S. General Services Administration, Technology Transformation Service. The data’s metadata was last updated January 16, 2020. For our analysis, we have filtered out the schools who did not report their vaccination data.
 
 ## Enrollment and Vaccines
 
 ```{r enrollment, echo=FALSE}
 enrollment_perc_complete_plotly
+
+enrollment <- mean_enrollment
+vacinated <- mean_perc_vacinated
+
 ```
+
+A question we wanted to answer was “do larger schools have higher percentages of all vaccinations completed?” We thought that larger schools may push or require its families to vaccinate their children as disease could spread faster and impact more people due to a larger population that is typically in close contact. Before creating this plot, we found that the mean enrollment size in each school in the state  is `r mean_enrollment` students and that the mean percentage complete for all vaccinations in the whole state is `r mean_perc_vacinated`. 
+
+This plot compares the counties within the state and provides their average enrollments and average percent of having completed all vaccinations. The trendline shows that there is a slight positive correlation which can indicate that larger schools have more children who have received all vaccinations.
 
 ## Reasons for No Vaccination
 

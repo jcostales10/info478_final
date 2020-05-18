@@ -9,9 +9,16 @@ reported_only <- vac_2017 %>%
   select(School_Name, K_12_enrollment, Percent_complete_for_all_immunizations)
 
 # mean school enrollment size in the whole state
-mean <- reported_only %>%
+mean_enrollment <- reported_only %>%
   select(K_12_enrollment) %>%
-  summarise(mean = mean(K_12_enrollment))
+  summarise(mean = mean(K_12_enrollment)) %>%
+  pull(mean)
+
+# mean percentage complete for all vaccinations in the whole state
+mean_perc_vacinated <- reported_only %>%
+  select(Percent_complete_for_all_immunizations) %>%
+  summarise(mean = mean(Percent_complete_for_all_immunizations)) %>%
+  pull(mean)
 
 # group by county
 county_summary_stats <- vac_2017 %>%
@@ -37,6 +44,7 @@ enrollment_perc_complete <- county_summary_stats %>%
   )
 
 
+# axis labels 
 f <- list(
   family = "Courier New, monospace",
   size = 18,
@@ -52,15 +60,16 @@ y <- list(
   titlefont = f
 )
 
+# plotly graph
+fit <- lm(mean_perc_complete_all_vacinations ~ mean_enrollment, data = county_summary_stats)
 
 
-enrollment_perc_complete_plotly <-  plot_ly(data = county_summary_stats, type="scatter", 
-              x = ~mean_enrollment, 
-              y = ~mean_perc_complete_all_vacinations,
-              mode = "markers",
-              text = ~paste("County: ", County)) %>%
+enrollment_perc_complete_plotly <- county_summary_stats %>% 
+  plot_ly(x = ~mean_enrollment, text = ~paste("County: ", County)) %>% 
+  add_markers(y = ~mean_perc_complete_all_vacinations) %>% 
+  add_lines(x = ~mean_enrollment, y = fitted(fit)) %>%
   layout(
     title = "WA K - 12 Enrollment Sizes and % Vaccinated with All Vaccines by County",
     xaxis = x, 
-    yaxis = y)
-  
+    yaxis = y,
+    showlegend = FALSE)
