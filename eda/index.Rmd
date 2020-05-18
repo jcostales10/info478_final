@@ -8,35 +8,35 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-sea_bnb <- read.csv("data/listing.csv", stringsAsFactors = F)
+vac_2017 <- read.csv("info478_final/data/immunization_2017.csv", stringsAsFactors = F)
 
-source("scripts/bar_chart.R")
-source("scripts/map_chart.R")
-source("scripts/scatterplot.R")
-source("scripts/summarytable.R")
-source("scripts/summaryinfo.R")
+source("scripts/enrollment.R")
+
 
 library(ggplot2)
 library(shiny)
 library(knitr)
+library(plotly)
 ```
 
-## R Markdown
+## Introduction
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r intro, echo=F }
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
+## Summary Information
+
+```{r summary, echo=F}
+
+```
+
+## Enrollment and Vaccines
 
 You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r enrollment, echo=FALSE}
+enrollment_perc_complete_plotly
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
