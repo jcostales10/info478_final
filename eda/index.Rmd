@@ -10,6 +10,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 source("../scripts/enrollment.R")
 source("../scripts/exemptions.R")
+source("../scripts/counties.R")
+source("../scripts/districts_by_county.R")
 
 library(ggplot2)
 library(shiny)
@@ -39,5 +41,17 @@ enrollment_perc_complete_plotly
 
 ```{r exemptions, echo=FALSE}
 exemption_vis
+```
+
+## Immunization by County
+
+```{r counties, echo=FALSE}
+counties_plot
+```
+
+## Immunization for Districts by County
+
+```{r districts_by_county, echo=FALSE, comment=NA, results='hide'}
+districts_plot
 ```
 
