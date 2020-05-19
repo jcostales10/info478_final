@@ -56,7 +56,7 @@ We wanted to know more about the distribution of the reasons for not vaccinating
 This pie chart displays the count and percentage of the different reasons for not vaccinating. We can deduce that not vaccinating due to personal exemption makes up 71.6% (44,104 children) of the total number of children (61,598 children) who didn’t get vaccinated. We see that we should be focusing our efforts in targeting children who have personal exemptions.
 
 ## Immunization by County
-```{r counties, echo=FALSE}
+```{r, echo=FALSE}
 county_plot
 ```
 To get a better grasp on the variation of immunization rates throughout the state we decided to map out the rates at which counties had immunizations based on data collected from those attending K-12 education. The percentage of immunizations were calculated by dividing the number of complete immunizations in students by the total number of students enrolled. 
