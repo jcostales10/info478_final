@@ -59,6 +59,7 @@ This pie chart displays the count and percentage of the different reasons for no
 ```{r, echo=FALSE}
 county_plot
 ```
+
 To get a better grasp on the variation of immunization rates throughout the state we decided to map out the rates at which counties had immunizations based on data collected from those attending K-12 education. The percentage of immunizations were calculated by dividing the number of complete immunizations in students by the total number of students enrolled. 
 
 This figure shows us the variation of rates amongst different counties in the state which may allow us to draw out some interesting insights. An important takeway that we wanted to highlight from the results of this figure is to be cognisant of population densities within these individual counties and how they may affect the overall percentage and rate at which immunizations are taken. 
