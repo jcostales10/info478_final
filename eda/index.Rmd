@@ -3,6 +3,7 @@ title: "Exploratory Analysis"
 author: "Azim Abdul Wahid, Hannah Chung, Michelle To, Jamie Costales"
 date: "5/17/2020"
 output: html_document
+runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
@@ -10,7 +11,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 source("../scripts/enrollment.R")
 source("../scripts/exemptions.R")
-source("../scripts/counties.R")
 source("../scripts/districts_by_county.R")
 
 library(ggplot2)
@@ -64,12 +64,25 @@ To get a better grasp on the variation of immunization rates throughout the stat
 
 This figure shows us the variation of rates amongst different counties in the state which may allow us to draw out some interesting insights. An important takeway that we wanted to highlight from the results of this figure is to be cognisant of population densities within these individual counties and how they may affect the overall percentage and rate at which immunizations are taken. 
 
-```{r counties, echo=FALSE}
-counties_plot
-```
-## Immunization for Districts by County
+## Immunization by District
 
-```{r districts_by_county, echo=FALSE, comment=NA, results='hide'}
-districts_plot
+Based on the data we have for WA state, we are also curious to see if there is a relationship between county and district in terms of immunization rates and population density. For example, King County consists of many school districts (i.e. Seattle, Issaquah, Federal Way, etc.), so if we were to take a look at the immunization rate for King County, the rates for the school districts, and the population density for each county, is there a trend? With this question, we also need to remember that the population not only consists of K-12 students, but infants, college students, adults, and the elderly as well. (Note: I have not reflected the population density into the visualizations yet. I am also still working on organizing the charts so they all don't show up at once. I have the input completed, but I'm having some struggles with the corresponding output.)
+
+The following visualizations show the ratio of students who have recieved all immunizations to those who have not based on district. The percentage was calculated by taking the total number of students who have recieved all immunizations divided by the total number of students enrolled in each district. A similar plot based on the counties has been provided for reference. 
+
+```{r districts_by_county, echo=FALSE, warning=FALSE}
+selectInput("County", label = "Select County", choices = county_list)
+counties_plot
+
+#mainPanel(counties_plot, renderPlot({
+#  plot_ly(data = input$County, x = ~Immunization_Percentage, y = ~School_District,
+#          name = "Immunization Rate in each District",
+#          type = "bar", color = ~School_District, text = ~paste(School_District, ": ", #signif(Immunization_Percentage, 4), "%", sep = ""),
+#          hoverinfo = 'text') %>%
+#  layout(
+#    title = "Immunization Rate in each District",
+#    xaxis = list(title = "Students with Complete Immunization (%)"),
+#    showlegend = FALSE)
+#}))
 ```
 
