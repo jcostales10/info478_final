@@ -71,18 +71,8 @@ Based on the data we have for WA state, we are also curious to see if there is a
 The following visualizations show the ratio of students who have recieved all immunizations to those who have not based on district. The percentage was calculated by taking the total number of students who have recieved all immunizations divided by the total number of students enrolled in each district. A similar plot based on the counties has been provided for reference. 
 
 ```{r districts_by_county, echo=FALSE, warning=FALSE}
-selectInput("County", label = "Select County", choices = county_list)
 counties_plot
-
-#mainPanel(counties_plot, renderPlot({
-#  plot_ly(data = input$County, x = ~Immunization_Percentage, y = ~School_District,
-#          name = "Immunization Rate in each District",
-#          type = "bar", color = ~School_District, text = ~paste(School_District, ": ", #signif(Immunization_Percentage, 4), "%", sep = ""),
-#          hoverinfo = 'text') %>%
-#  layout(
-#    title = "Immunization Rate in each District",
-#    xaxis = list(title = "Students with Complete Immunization (%)"),
-#    showlegend = FALSE)
-#}))
+selectInput("County", label = "Select County", choices = names(districts_in_counties))
+mainPanel(renderPlotly(dis_plot_func(get(input$County), input$County)))
 ```
 

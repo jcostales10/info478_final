@@ -49,28 +49,20 @@ districts_in_counties <- split(districts_data, districts_data$County)
 
 for(i in 1:length(districts_in_counties)){
   assign(paste(names(districts_in_counties[i])), as.data.frame(districts_in_counties[[i]]))
-  }
-
-plot_function <- function(input){
-  district_plot <- districts_in_counties$input %>%
-  plot_ly(x = ~Immunization_Percentage, y = ~School_District, type = "bar", color = ~School_District) %>%
-  layout(
-    title = "Immunization Rate in each District",
-    xaxis = list(title = "Students with Complete Immunization (%)"),
-    showlegend = FALSE)
-  district_plot
 }
 
-#district_plot <- function(county_input){
-#  ggplot(districts_in_counties$county_input) + 
-#    geom_bar(mapping = aes(x = School_District, y = Immunization_Percentage,
-#                           fill = School_District),
-#             stat = "identity", show.legend = FALSE) +
-#    geom_text(mapping = aes(x = School_District, y = Immunization_Percentage,
-#                            label = signif(Immunization_Percentage, digits = 4)), size = 3) +
-#    labs(county_input, x = "School District", y = "Immunization Rate") +
-#    coord_flip()
-#}
+dis_plot_func <- function(county_input, county){
+   district_plot <- county_input %>%
+    plot_ly(x = ~Immunization_Percentage, y = ~School_District, name = "Immunization Rate in each District",
+            type = "bar", color = ~School_District, text = ~paste(School_District, ": ", signif(Immunization_Percentage, 4), "%", sep = ""),
+            hoverinfo = 'text') %>%
+    layout(
+      title = paste("Immunization Rate in ", county, " County", sep = ""),
+      xaxis = list(title = "Students with Complete Immunization (%)"),
+      yaxis = list(title = "School District"),
+      showlegend = FALSE)
+  return(district_plot)
+  }
 
 #---------------------------------------------------------------------------------------------
 
