@@ -24,37 +24,49 @@ data <- filter(data, Reported == "Y") %>%
 counties_districts <- select(data, School_District, County) %>%
   distinct(School_District, .keep_all = TRUE)
 
-# Districts statistics (data frame and plots)
+# County data frame
+counties_data <- select(data, -School_District, -County) %>%
+  aggregate(list(data$County), sum) %>%
+  mutate(Immunization_Percentage = (Number_complete_for_all_immunizations/K_12_enrollment) * 100)
+colnames(counties_data)[1] <- "County"
+counties_plot <- counties_data %>%
+  plot_ly(x = ~Immunization_Percentage, y = ~County, name = "Immunization Rate in each County",
+          type = "bar", color = ~County, text = ~paste(County, ": ", signif(Immunization_Percentage, 4), "%", sep = ""),
+          hoverinfo = 'text') %>%
+  layout(
+    title = "Immunization Rate in each County",
+    xaxis = list(title = "Students with Complete Immunization (%)"),
+    showlegend = FALSE)
+county_list <- counties_data$County
+
+# Districts data frame
 districts_data <- select(data, -School_District, -County) %>%
   aggregate(list(data$School_District), sum) %>%
   mutate(Immunization_Percentage = (Number_complete_for_all_immunizations/K_12_enrollment) * 100)
 colnames(districts_data)[1] <- "School_District"
 districts_data <- inner_join(districts_data, counties_districts, by = "School_District")
 districts_in_counties <- split(districts_data, districts_data$County) 
- 
-districts_data <- rename(districts_data, subregion = County)
 
-
-i <- 1
-plot_list <- list()
-while(i <= length(districts_in_counties)){
-  df <- data.frame(districts_in_counties[[i]])
-  plot_list[[i]] <- df
-  i <- i + 1
+for(i in 1:length(districts_in_counties)){
+  assign(paste(names(districts_in_counties[i])), as.data.frame(districts_in_counties[[i]]))
 }
 
-districts_plot <- lapply(plot_list, function(x){
-  ggplot(x) +
-    geom_bar(mapping = aes(x = School_District, y = Immunization_Percentage, fill = School_District),
-             stat = "identity", show.legend = FALSE) +
-    geom_text(mapping = aes(x = School_District, y = Immunization_Percentage,
-                            label = signif(Immunization_Percentage, digits = 4)), size = 3) +
-    labs(x = "School District", y = "Immunization Rate") +
-    coord_flip() + 
-    facet_wrap(~County)
+dis_plot_func <- function(county_input, county){
+   district_plot <- county_input %>%
+    plot_ly(x = ~Immunization_Percentage, y = ~School_District, name = "Immunization Rate in each District",
+            type = "bar", color = ~School_District, text = ~paste(School_District, ": ", signif(Immunization_Percentage, 4), "%", sep = ""),
+            hoverinfo = 'text') %>%
+    layout(
+      title = paste("Immunization Rate in ", county, " County", sep = ""),
+      xaxis = list(title = "Students with Complete Immunization (%)"),
+      yaxis = list(title = "School District"),
+      showlegend = FALSE)
+  return(district_plot)
   }
-)
 
+#---------------------------------------------------------------------------------------------
+
+districts_data <- rename(districts_data, subregion = County)
 
 # -------------- map of counties --------------
 map_df <- map_data("county") %>%

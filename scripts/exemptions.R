@@ -1,5 +1,6 @@
 library(tidyverse)
 library(plotly)
+library(shiny)
 
 vac_2017 <- read.csv("../data/immunization_2017.csv", stringsAsFactors = F)
 
