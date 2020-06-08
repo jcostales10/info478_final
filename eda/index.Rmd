@@ -1,7 +1,7 @@
 ---
-title: "Exploratory Analysis"
+title: "App Title"
 author: "Azim Abdul Wahid, Hannah Chung, Michelle To, Jamie Costales"
-date: "5/17/2020"
+date: "6/8/2020"
 output: html_document
 runtime: shiny
 ---
@@ -21,7 +21,9 @@ library("maps")
 library("mapproj")
 ```
 
-## Introduction
+## {.tabset}
+
+### Introduction
 
 ```{r intro, echo =FALSE }
 
@@ -31,7 +33,7 @@ The domain we originally started with was vaccinations. This domain piqued our i
 
 The domain we narrowed our assignment to was vaccinations within K-12 schools in Washington State. The dataset we’re using to gain more insight on this issue within the state is the [WA State K-12 Immunization Data 2016-2017](https://catalog.data.gov/dataset/all-students-kindergarten-through-12th-grade-immunization-data-by-school-2016-2017). It includes all the schools within the state and information on items such as the school population, location, percentage of vaccination exemptions (and what kind), percentage of how many students have all vaccinations, and much more. The data was downloaded from Data.gov which is managed and hosted by the U.S. General Services Administration, Technology Transformation Service. The data’s metadata was last updated January 16, 2020. For our analysis, we have filtered out the schools who did not report their vaccination data.
 
-## Enrollment and Vaccines
+### Enrollment and Vaccines
 
 ```{r enrollment, echo=FALSE}
 enrollment_perc_complete_plotly
@@ -45,7 +47,7 @@ A question we wanted to answer was “do larger schools have higher percentages 
 
 This plot compares the counties within the state and provides their average enrollments and average percent of having completed all vaccinations. The trendline shows that there is a slight positive correlation which can indicate that larger schools have more children who have received all vaccinations.
 
-## Reasons for No Vaccination
+### Reasons for No Vaccination
 
 ```{r exemptions, echo=FALSE}
 exemption_vis
@@ -55,7 +57,7 @@ We wanted to know more about the distribution of the reasons for not vaccinating
 
 This pie chart displays the count and percentage of the different reasons for not vaccinating. We can deduce that not vaccinating due to personal exemption makes up 71.6% (44,104 children) of the total number of children (61,598 children) who didn’t get vaccinated. We see that we should be focusing our efforts in targeting children who have personal exemptions.
 
-## Immunization by County
+### Immunization by County
 ```{r, echo=FALSE}
 county_plot
 ```
@@ -64,15 +66,16 @@ To get a better grasp on the variation of immunization rates throughout the stat
 
 This figure shows us the variation of rates amongst different counties in the state which may allow us to draw out some interesting insights. An important takeway that we wanted to highlight from the results of this figure is to be cognisant of population densities within these individual counties and how they may affect the overall percentage and rate at which immunizations are taken. 
 
-## Immunization by District
+### Immunization by District
 
-Based on the data we have for WA state, we are also curious to see if there is a relationship between county and district in terms of immunization rates and population density. For example, King County consists of many school districts (i.e. Seattle, Issaquah, Federal Way, etc.), so if we were to take a look at the immunization rate for King County, the rates for the school districts, and the population density for each county, is there a trend? With this question, we also need to remember that the population not only consists of K-12 students, but infants, college students, adults, and the elderly as well. (Note: I have not reflected the population density into the visualizations yet. I am also still working on organizing the charts so they all don't show up at once. I have the input completed, but I'm having some struggles with the corresponding output.)
+Based on the data we have for WA state, we are also curious to see if there is a relationship between county and district in terms of immunization rates and population density. For example, King County consists of many school districts (i.e. Seattle, Issaquah, Federal Way, etc.), so if we were to take a look at the immunization rate for King County, the rates for the school districts, and the population density for each county, is there a trend? With this question, we also need to remember that the population not only consists of K-12 students, but infants, college students, adults, and the elderly as well. (Note: I have not reflected the population density into the visualizations yet.)
 
 The following visualizations show the ratio of students who have recieved all immunizations to those who have not based on district. The percentage was calculated by taking the total number of students who have recieved all immunizations divided by the total number of students enrolled in each district. A similar plot based on the counties has been provided for reference. 
 
 ```{r districts_by_county, echo=FALSE, warning=FALSE}
-counties_plot
+districts_top10_plot
 selectInput("County", label = "Select County", choices = names(districts_in_counties))
-mainPanel(renderPlotly(dis_plot_func(get(input$County), input$County)))
+renderPlotly(dis_plot_func(get(input$County), input$County))
+renderTable(get(input$County))
 ```
 

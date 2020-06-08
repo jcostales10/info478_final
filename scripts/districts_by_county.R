@@ -27,24 +27,43 @@ counties_districts <- select(data, School_District, County) %>%
 # County data frame
 counties_data <- select(data, -School_District, -County) %>%
   aggregate(list(data$County), sum) %>%
-  mutate(Immunization_Percentage = (Number_complete_for_all_immunizations/K_12_enrollment) * 100)
+  mutate(Immunization_Percentage = (Number_complete_for_all_immunizations/K_12_enrollment) * 100) %>%
+  dplyr::arrange(-Immunization_Percentage)
 colnames(counties_data)[1] <- "County"
-counties_plot <- counties_data %>%
-  plot_ly(x = ~Immunization_Percentage, y = ~County, name = "Immunization Rate in each County",
-          type = "bar", color = ~County, text = ~paste(County, ": ", signif(Immunization_Percentage, 4), "%", sep = ""),
-          hoverinfo = 'text') %>%
-  layout(
-    title = "Immunization Rate in each County",
-    xaxis = list(title = "Students with Complete Immunization (%)"),
-    showlegend = FALSE)
+#counties_plot <- counties_data %>%
+#  plot_ly(x = ~Immunization_Percentage, y = ~County, name = "Immunization Rate in each County",
+#          type = "bar", color = ~County, text = ~paste(County, ": ", Immunization_Percentage, "%", sep = ""),
+#          hoverinfo = 'text') %>%
+#  layout(
+#    title = "Immunization Rate in each County",
+#    xaxis = list(title = "Students with Complete Immunization (%)"),
+#    showlegend = FALSE)
 county_list <- counties_data$County
 
+# WA Average
+WA_average <- mean(counties_data$Immunization_Percentage)
+
+# Top 10 Counties
+#counties_top10 <- top_n(counties_data, 10, Immunization_Percentage)
+#counties_top10_plot <- counties_top10 %>%
+#  plot_ly(x = ~Immunization_Percentage, y = ~County, name = "Highest Immunization Rates by County",
+#          type = "bar", color = ~County, text = ~paste(County, ": ", signif(Immunization_Percentage, 4), "%", sep = ""),
+#          hoverinfo = 'text') %>%
+#  layout(
+#    title = "Highest Immunization Rates by County",
+#    xaxis = list(title = "Students with Complete Immunization (%)"),
+#    showlegend = FALSE)
+
 # Districts data frame
-districts_data <- select(data, -School_District, -County) %>%
+districts_data <- dplyr::select(data, -School_District, -County) %>%
   aggregate(list(data$School_District), sum) %>%
-  mutate(Immunization_Percentage = (Number_complete_for_all_immunizations/K_12_enrollment) * 100)
+  mutate(Immunization_Percentage = (Number_complete_for_all_immunizations/K_12_enrollment) * 100) %>%
+  dplyr::arrange(-Immunization_Percentage)
 colnames(districts_data)[1] <- "School_District"
 districts_data <- inner_join(districts_data, counties_districts, by = "School_District")
+districts_data <- districts_data %>%
+  dplyr::select(School_District, K_12_enrollment, Number_complete_for_all_immunizations,
+                Immunization_Percentage, County)
 districts_in_counties <- split(districts_data, districts_data$County) 
 
 for(i in 1:length(districts_in_counties)){
@@ -62,7 +81,19 @@ dis_plot_func <- function(county_input, county){
       yaxis = list(title = "School District"),
       showlegend = FALSE)
   return(district_plot)
-  }
+}
+
+# Top 10 Districts
+districts_top10 <- top_n(districts_data, 10, Immunization_Percentage)
+districts_top10_plot <- districts_top10 %>%
+  plot_ly(x = ~Immunization_Percentage, y = ~School_District, name = "Highest Immunization Rates by School District",
+          type = "bar", color = ~School_District, text = ~paste(School_District, " in ", County, " County: ", signif(Immunization_Percentage, 4), "%", sep = ""),
+          hoverinfo = 'text') %>%
+  layout(
+    title = "Highest Immunization Rates by School District",
+    xaxis = list(title = "Students with Complete Immunization (%)"),
+    yaxis = list(title = "School District"),
+    showlegend = FALSE)
 
 #---------------------------------------------------------------------------------------------
 
@@ -100,12 +131,8 @@ county_maps$bins <- cut(
 )
   
 county_plot <- ggplot(county_maps) + 
-    geom_polygon(aes(x = long, y = lat, group = group, fill = bins)) +
+    geom_polygon(aes(x = long, y = lat, group = group, fill = bins), colour = "black") +
   scale_fill_brewer(palette = "Blues") +
   coord_quickmap() +
   labs(title = " % Immunizations by County 2017", fill = "Immunization Percentage") +
   theme_void()
-
-
-
-
