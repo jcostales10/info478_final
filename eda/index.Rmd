@@ -1,7 +1,7 @@
 ---
-title: "Exploratory Analysis"
+title: "Analysis of Vaccinations in Washington State"
 author: "Azim Abdul Wahid, Hannah Chung, Michelle To, Jamie Costales"
-date: "5/17/2020"
+date: "`r Sys.Date()`"
 output: html_document
 runtime: shiny
 ---
@@ -22,17 +22,31 @@ library("mapproj")
 ```
 
 ## {.tabset}
+
 ### Introduction
 
 ```{r intro, echo =FALSE }
 
 ```
+**History of Vaccines**
+
+The story of vaccines did not begin with the first vaccine–Edward Jenner’s use of material from cowpox pustules to provide protection against smallpox. Rather, it begins with the long history of infectious disease in humans, and in particular, with early uses of smallpox material to provide immunity to that disease.
+
+Evidence exists that the Chinese employed smallpox inoculation (or variolation, as such use of smallpox material was called) as early as 1000 CE. It was practiced in Africa and Turkey as well, before it spread to Europe and the Americas.
+
+Edward Jenner’s innovations, begun with his successful 1796 use of cowpox material to create immunity to smallpox, quickly made the practice widespread. His method underwent medical and technological changes over the next 200 years, and eventually resulted in the eradication of smallpox.
+
+Louis Pasteur’s 1885 rabies vaccine was the next to make an impact on human disease. And then, at the dawn of bacteriology, developments rapidly followed. Antitoxins and vaccines against diphtheria, tetanus, anthrax, cholera, plague, typhoid, tuberculosis, and more were developed through the 1930s.
+
+The middle of the 20th century was an active time for vaccine research and development. Methods for growing viruses in the laboratory led to rapid discoveries and innovations, including the creation of vaccines for polio. Researchers targeted other common childhood diseases such as measles, mumps, and rubella, and vaccines for these diseases reduced the disease burden greatly.
+
+**Domain of Interest**
 
 The domain we originally started with was vaccinations. This domain piqued our interest as it’s a public health area that’s currently been getting more coverage especially as groups of anti-vaxxers are on the rise and there is a strong push to get a vaccine for COVID-19. Vaccines are also a public health intervention that can prevent or provide protection against many infections and diseases.
 
 The domain we narrowed our assignment to was vaccinations within K-12 schools in Washington State. The dataset we’re using to gain more insight on this issue within the state is the [WA State K-12 Immunization Data 2016-2017](https://catalog.data.gov/dataset/all-students-kindergarten-through-12th-grade-immunization-data-by-school-2016-2017). It includes all the schools within the state and information on items such as the school population, location, percentage of vaccination exemptions (and what kind), percentage of how many students have all vaccinations, and much more. The data was downloaded from Data.gov which is managed and hosted by the U.S. General Services Administration, Technology Transformation Service. The data’s metadata was last updated January 16, 2020. For our analysis, we have filtered out the schools who did not report their vaccination data.
 
-## Enrollment and Vaccines
+### Enrollment and Vaccines
 
 ```{r enrollment, echo=FALSE}
 enrollment_perc_complete_plotly
@@ -48,13 +62,49 @@ This plot compares the counties within the state and provides their average enro
 
 ### Reasons for No Vaccination
 
-```{r exemptions, echo=FALSE}
-exemption_vis
-```
+**Inquiries**
 
 We wanted to know more about the distribution of the reasons for not vaccinating. We thought that if we knew the distribution, we would know where to best focus efforts in addressing the lack of vaccination.
 
 This pie chart displays the count and percentage of the different reasons for not vaccinating. We can deduce that not vaccinating due to personal exemption makes up 71.6% (44,104 children) of the total number of children (61,598 children) who didn’t get vaccinated. We see that we should be focusing our efforts in targeting children who have personal exemptions.
+
+```{r exemptions, echo=FALSE}
+checkboxGroupInput(
+        "exemptions",
+        label = h3("Exemption Reasons"),
+        choices = list(
+          "Personal" = exemption_sums$`Personal exemption`,
+          "Medical" = exemption_sums$`Medical exemption`,
+          "Religious" = exemption_sums$`Religious exemption`,
+          "Religious membership" = exemption_sums$`Religious membership exemption`
+        ),
+        selected = c(exemption_sums$`Personal exemption`, exemption_sums$`Medical exemption`,
+                     exemption_sums$`Religious exemption`, exemption_sums$`Religious membership exemption`)
+)
+renderPlotly({
+  
+  # make df based on input
+  exemption_modified <- exemption_summary  %>%
+     filter(count == input$exemptions)
+  
+  # plotly piechart to display counts and percentages
+  exemption_plot <- plot_ly(data = exemption_modified, labels = ~reasons,
+                           values = ~count, type = 'pie')
+  
+  exemption_plot <- exemption_plot %>%
+    layout(title = 'Exemption Count and Percentages',
+           xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+           yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+})
+```
+
+**Research and Future Implications**
+
+Another cause for concern is the number of disease outbreaks attributed to religious groups. For example, since recorded in September 2018, there are 535 confirmed cases of measles among Orthodox Jewish communities in Brooklyn and Queens alone, a disease previously declared eradicated in the U.S. in year 2000.
+  
+Recent trends have shown that in states where there is a ban on personal exemptions, there have been a rise in religious exemptions despite only a few religions that are against vaccinations. An example is the state of Vermont. The state banned personal exemptions and in the following years, there were 7x more religious exemptions than before the ban.
+  
+In May 2019, the Washington State Legislature passed a bill that removes the personal and philosophical option to exempt children from the MMR (measles, mumps, and rubella) vaccine required for school and child care entry. This law does not change religious and medical exemption laws. The data used to produce the charts is data from the 2017 school year, before the bill was passed. Although there will be a decline in the number of personal exemptions, there might be an increase in religious exemptions.
 
 ### Immunization by County
 ```{r, echo=FALSE}
@@ -67,13 +117,17 @@ This figure shows us the variation of rates amongst different counties in the st
 
 ### Immunization by District
 
-Based on the data we have for WA state, we are also curious to see if there is a relationship between county and district in terms of immunization rates and population density. For example, King County consists of many school districts (i.e. Seattle, Issaquah, Federal Way, etc.), so if we were to take a look at the immunization rate for King County, the rates for the school districts, and the population density for each county, is there a trend? With this question, we also need to remember that the population not only consists of K-12 students, but infants, college students, adults, and the elderly as well. (Note: I have not reflected the population density into the visualizations yet. I am also still working on organizing the charts so they all don't show up at once. I have the input completed, but I'm having some struggles with the corresponding output.)
+Based on the data we have for WA state, we are also curious to see if there is a relationship between county and district in terms of immunization rates and population density. For example, King County consists of many school districts (i.e. Seattle, Issaquah, Federal Way, etc.), so if we were to take a look at the immunization rate for King County, the rates for the school districts, and the population density for each county, is there a trend? With this question, we also need to remember that the population not only consists of K-12 students, but infants, college students, adults, and the elderly as well. (Note: I have not reflected the population density into the visualizations yet.)
 
 The following visualizations show the ratio of students who have recieved all immunizations to those who have not based on district. The percentage was calculated by taking the total number of students who have recieved all immunizations divided by the total number of students enrolled in each district. A similar plot based on the counties has been provided for reference. 
 
 ```{r districts_by_county, echo=FALSE, warning=FALSE}
-counties_plot
+districts_top10_plot
 selectInput("County", label = "Select County", choices = names(districts_in_counties))
-mainPanel(renderPlotly(dis_plot_func(get(input$County), input$County)))
+renderPlotly(dis_plot_func(get(input$County), input$County))
+renderTable(get(input$County))
 ```
 
+### Conclusions
+
+A ban on personal exemptions may not be the best option to go about increasing vaccination completion among kids in school. Religious exemptions may be an increasingly problematic or outdated exemption category, and researchers and policy makers must work together to determine how best to balance a respect for religious liberty with the need to protect public health.
