@@ -50,7 +50,7 @@ The domain we narrowed our assignment to was vaccinations within K-12 schools in
 
 
 
-**Comparing the Average School Size by County to Their Immunization %**
+#### Comparing the Average School Size by County to Their Immunization %
 
 
 ```{r enrollment_static, echo=FALSE}
@@ -88,12 +88,12 @@ renderPlotly ({
                              type = "scatter",
                              x = ~K_12_enrollment,
                              y = ~Percent_complete_for_all_immunizations,
-                             mode = "markers",
+                             #mode = "markers",
                              colors = "#246A73",
-                             marker = list(size = 5),
+                             #marker = list(size = 5),
                              #size = 1,
                              text = ~paste(School_Name)) %>%
-        add_lines(x = ~K_12_enrollment, y = fitted(fit_two), width = 1) %>% 
+        add_lines(x = ~K_12_enrollment, y = fitted(fit_two)) %>% 
         layout(title = paste("School Enrollment Size and % Immunized in", input$county_choice, "county"),
                xaxis = list(title = "Student Enrollment Size"),
                yaxis = list(title = "Percent Complete for all Immunizations"),
