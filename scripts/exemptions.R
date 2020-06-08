@@ -2,7 +2,7 @@ library(tidyverse)
 library(plotly)
 library(shiny)
 
-vac_2017 <- read.csv("../data/immunization_2017.csv", stringsAsFactors = F)
+vac_2017 <- read.csv("data/immunization_2017.csv", stringsAsFactors = F)
 
 # Count total of all exemptions
 
@@ -42,4 +42,8 @@ exemption_vis <- exemption_vis %>%
   layout(title = 'Exemption Count and Percentages',
          xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
          yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-  
+
+ggplot(exemption_summary, aes(x = "", y = count, fill = reasons)) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
+  coord_polar("y", start = 0) +
+  theme_void() 
