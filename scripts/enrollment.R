@@ -73,3 +73,12 @@ enrollment_perc_complete_plotly <- county_summary_stats %>%
     xaxis = x, 
     yaxis = y,
     showlegend = FALSE)
+
+# --------- added things for final deliverable 
+
+attach(vac_2017)
+county_counts <- vac_2017 %>%
+  select(County) %>% 
+  aggregate(by = list(County), FUN= length) %>%
+  rename(count = County) %>%
+  rename(County = Group.1)

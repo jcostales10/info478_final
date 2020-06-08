@@ -48,7 +48,12 @@ The domain we narrowed our assignment to was vaccinations within K-12 schools in
 
 ### Enrollment and Vaccines
 
-```{r enrollment, echo=FALSE}
+
+
+**Comparing the Average School Size by County to Their Immunization %**
+
+
+```{r enrollment_static, echo=FALSE}
 enrollment_perc_complete_plotly
 
 enrollment <- mean_enrollment
@@ -56,9 +61,50 @@ vacinated <- mean_perc_vacinated
 
 ```
 
+ 
 A question we wanted to answer was “do larger schools have higher percentages of all vaccinations completed?” We thought that larger schools may push or require its families to vaccinate their children as disease could spread faster and impact more people due to a larger population that is typically in close contact. Before creating this plot, we found that the mean enrollment size in each school in the state  is `r mean_enrollment` students and that the mean percentage complete for all vaccinations in the whole state is `r mean_perc_vacinated`. 
 
 This plot compares the counties within the state and provides their average enrollments and average percent of having completed all vaccinations. The trendline shows that there is a slight positive correlation which can indicate that larger schools have more children who have received all vaccinations.
+
+
+**Comparing Schools Within a Specific County And Immunization %**
+
+```{r enrollment_plotly, echo=FALSE}
+selectInput(
+  "county_choice", 
+  label = h3("Choose County"), 
+  choices = county_counts$County, 
+  selected = 1)
+
+
+renderPlotly ({
+    county_filtered <- vac_2017 %>%
+      filter(Percent_complete_for_all_immunizations != "NA") %>%
+      filter(County == input$county_choice) 
+    
+     fit_two <- lm(Percent_complete_for_all_immunizations ~ K_12_enrollment, data = county_filtered)
+    
+    scatterplot <- plot_ly(data = county_filtered,
+                             type = "scatter",
+                             x = ~K_12_enrollment,
+                             y = ~Percent_complete_for_all_immunizations,
+                             mode = "markers",
+                             colors = "#246A73",
+                             marker = list(size = 5),
+                             #size = 1,
+                             text = ~paste(School_Name)) %>%
+        add_lines(x = ~K_12_enrollment, y = fitted(fit_two), width = 1) %>% 
+        layout(title = paste("School Enrollment Size and % Immunized in", input$county_choice, "county"),
+               xaxis = list(title = "Student Enrollment Size"),
+               yaxis = list(title = "Percent Complete for all Immunizations"),
+               showlegend = FALSE)
+      
+    return(scatterplot)
+     
+  })
+
+
+```
 
 ### Reasons for No Vaccination
 
