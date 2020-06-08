@@ -1,7 +1,7 @@
 ---
 title: "App Title"
 author: "Azim Abdul Wahid, Hannah Chung, Michelle To, Jamie Costales"
-date: "6/8/2020"
+date: "`r Sys.Date()`"
 output: html_document
 runtime: shiny
 ---
