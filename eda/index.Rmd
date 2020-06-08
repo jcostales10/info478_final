@@ -82,10 +82,9 @@ checkboxGroupInput(
                      exemption_sums$`Religious exemption`, exemption_sums$`Religious membership exemption`)
 )
 renderPlotly({
-  
   # make df based on input
-  exemption_modified <- exemption_summary  %>%
-     filter(count == input$exemptions)
+   exemption_modified <- exemption_summary %>%
+    filter(count == input$exemptions)
   
   # plotly piechart to display counts and percentages
   exemption_plot <- plot_ly(data = exemption_modified, labels = ~reasons,
