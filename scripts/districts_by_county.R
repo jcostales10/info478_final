@@ -1,8 +1,3 @@
-#install.packages("maps")
-#install.packages("mapproj")
-#install.packages("plotly")
-#install.packages("rjson")
-
 library(tidyr)
 library(dplyr)
 library(ggplot2)
@@ -40,9 +35,6 @@ colnames(counties_data)[1] <- "County"
 #    showlegend = FALSE)
 county_list <- counties_data$County
 
-# WA Average
-WA_average <- mean(counties_data$Immunization_Percentage)
-
 # Top 10 Counties
 #counties_top10 <- top_n(counties_data, 10, Immunization_Percentage)
 #counties_top10_plot <- counties_top10 %>%
@@ -61,9 +53,6 @@ districts_data <- dplyr::select(data, -School_District, -County) %>%
   dplyr::arrange(-Immunization_Percentage)
 colnames(districts_data)[1] <- "School_District"
 districts_data <- inner_join(districts_data, counties_districts, by = "School_District")
-districts_data <- districts_data %>%
-  dplyr::select(School_District, K_12_enrollment, Number_complete_for_all_immunizations,
-                Immunization_Percentage, County)
 districts_in_counties <- split(districts_data, districts_data$County) 
 
 for(i in 1:length(districts_in_counties)){
@@ -72,20 +61,23 @@ for(i in 1:length(districts_in_counties)){
 
 dis_plot_func <- function(county_input, county){
    district_plot <- county_input %>%
-    plot_ly(x = ~Immunization_Percentage, y = ~School_District, name = "Immunization Rate in each District",
+    plot_ly(x = ~Immunization_Percentage, y = ~School_District, name = "Immunization Rates in each District",
             type = "bar", color = ~School_District, text = ~paste(School_District, ": ", signif(Immunization_Percentage, 4), "%", sep = ""),
             hoverinfo = 'text') %>%
     layout(
-      title = paste("Immunization Rate in ", county, " County", sep = ""),
+      title = paste("Immunization Rates in ", county, " County", sep = ""),
       xaxis = list(title = "Students with Complete Immunization (%)"),
       yaxis = list(title = "School District"),
       showlegend = FALSE)
   return(district_plot)
 }
 
+# WA Average
+WA_average <- mean(districts_data$Immunization_Percentage)
+
 # Top 10 Districts
 districts_top10 <- top_n(districts_data, 10, Immunization_Percentage)
-districts_top10_plot <- districts_top10 %>%
+Highest <- districts_top10 %>%
   plot_ly(x = ~Immunization_Percentage, y = ~School_District, name = "Highest Immunization Rates by School District",
           type = "bar", color = ~School_District, text = ~paste(School_District, " in ", County, " County: ", signif(Immunization_Percentage, 4), "%", sep = ""),
           hoverinfo = 'text') %>%
@@ -94,6 +86,21 @@ districts_top10_plot <- districts_top10 %>%
     xaxis = list(title = "Students with Complete Immunization (%)"),
     yaxis = list(title = "School District"),
     showlegend = FALSE)
+districts_low10 <- top_n(districts_data, 10, -Immunization_Percentage)
+Lowest <- districts_low10 %>%
+  plot_ly(x = ~Immunization_Percentage, y = ~School_District, name = "Lowest Immunization Rates by School District",
+          type = "bar", color = ~School_District, text = ~paste(School_District, " in ", County, " County: ", signif(Immunization_Percentage, 4), "%", sep = ""),
+          hoverinfo = 'text') %>%
+  layout(
+    title = "Lowest Immunization Rates by School District",
+    xaxis = list(title = "Students with Complete Immunization (%)"),
+    yaxis = list(title = "School District"),
+    showlegend = FALSE) %>%
+  add_annotations(
+    text = "QUEETS-CLEARWATER SCHOOL DISTRICT in CLALLAM County: 0%",
+    x = 20,
+    y = "QUEETS-CLEARWATER SCHOOL DISTRICT",
+    showarrow = FALSE)
 
 #---------------------------------------------------------------------------------------------
 
@@ -136,3 +143,4 @@ county_plot <- ggplot(county_maps) +
   coord_quickmap() +
   labs(title = " % Immunizations by County 2017", fill = "Immunization Percentage") +
   theme_void()
+

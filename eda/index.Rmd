@@ -1,7 +1,7 @@
 ---
-title: "Analysis of Vaccinations in Washington State"
+title: "Analysis of K-12 Immunization in WA State (2016-17)"
 author: "Azim Abdul Wahid, Hannah Chung, Michelle To, Jamie Costales"
-date: "`r Sys.Date()`"
+date: "6/8/2020"
 output: html_document
 runtime: shiny
 ---
@@ -13,10 +13,13 @@ source("../scripts/enrollment.R")
 source("../scripts/exemptions.R")
 source("../scripts/districts_by_county.R")
 
+#install.packages("DT")
+
 library(ggplot2)
 library(shiny)
 library(knitr)
 library(plotly)
+library(DT)
 library("maps")
 library("mapproj")
 ```
@@ -24,10 +27,6 @@ library("mapproj")
 ## {.tabset}
 
 ### Introduction
-
-```{r intro, echo =FALSE }
-
-```
 **History of Vaccines**
 
 The story of vaccines did not begin with the first vaccine–Edward Jenner’s use of material from cowpox pustules to provide protection against smallpox. Rather, it begins with the long history of infectious disease in humans, and in particular, with early uses of smallpox material to provide immunity to that disease.
@@ -46,16 +45,14 @@ The domain we originally started with was vaccinations. This domain piqued our i
 
 The domain we narrowed our assignment to was vaccinations within K-12 schools in Washington State. The dataset we’re using to gain more insight on this issue within the state is the [WA State K-12 Immunization Data 2016-2017](https://catalog.data.gov/dataset/all-students-kindergarten-through-12th-grade-immunization-data-by-school-2016-2017). It includes all the schools within the state and information on items such as the school population, location, percentage of vaccination exemptions (and what kind), percentage of how many students have all vaccinations, and much more. The data was downloaded from Data.gov which is managed and hosted by the U.S. General Services Administration, Technology Transformation Service. The data’s metadata was last updated January 16, 2020. For our analysis, we have filtered out the schools who did not report their vaccination data.
 
-### Enrollment and Vaccines
+### Enrollment
 
 ```{r enrollment_stats, echo=FALSE}
 enrollment <- mean_enrollment
 vacinated <- mean_perc_vacinated
-
 ```
 
 **Inquiries**
-
 
 One of the overarching questions we wanted to explore further was “do higher percentages of all vaccinations completed have some relationship to a school’s enrollment size?” We thought that this would be a good question to investigate since larger school populations meant that a larger group of people could be exposed and impacted if an infection were to happen. Before creating any of the plots, we found that the mean enrollment size in each school in the state  is `r mean_enrollment` and that the mean percentage complete for all vaccinations in the whole state is `r mean_perc_vacinated`. 
 
@@ -69,7 +66,6 @@ Another question that stems off the previous was “what are the possible trends
 
 ```{r enrollment_static, echo=FALSE}
 enrollment_perc_complete_plotly
-
 ```
 
 The ‘WA K-12 Enrollment Sizes and % Vaccinated with All Vaccines by County’ plot compares the counties within the state and provides their average enrollments and average percent of having completed all vaccinations. The trendline shows that there is a slight positive correlation which can indicate that larger schools tend to have a higher percentage of children in their school who have received all vaccinations. It can indicate that as a state, we are headed towards a positive direction, but there are still outliers that remind us that we can still do better, which can be a call to action to lawmakers.
@@ -83,7 +79,6 @@ The ‘WA K-12 Enrollment Sizes and % Vaccinated with All Vaccines by County’ 
 When viewed individually, there is a lot of variation between each county in terms of vaccination trend, number of schools per county, and where their distributions typically fall. According to [outside research](https://worldpopulationreview.com/states/washington-population/) and some data wrangling in R, the most densely populated counties and counties with the most enrolled students within Washington are `r top_three_enrollment` with the respective values of `r top_three_enrollment_values` students. The trends for these population dense counties, which also encapsulate many individual schools, are only slightly positive with lines that are almost flat but have a slight tilt upward to the right. This could signal that there may also not be a correlation between enrollment size and percent complete immunized/school. The counties with the smallest enrollment sizes are `r bottom_three_enrollment` with the respective values of `r bottom_three_enrollment_values` students which all show either strongly positive trends or no trend at all due to lack of supplemental points.
 
 The counties with the lowest percent complete all vaccinations are `r bottom_three_vac_perc` with the respective values of `r bottom_three_vac_perc_values` percents which were interesting explore as Stevens and Jefferson both had strongly positive trends although their averages, when compared to everyone else', were fairly lower. San Juan on the other hand had a trendline that was mostly flat, but had a slight negative tilt. It was interesting to see the plots of separate counties as Stevens and Jefferson support the potential relationship between school size and percent all vaccinated, however their low values as an average signal that there is can still be a lot done to better vaccination rates within each county specifically. 
-
 
 ```{r enrollment_plotly, echo=FALSE}
 selectInput(
@@ -122,7 +117,7 @@ renderPlotly ({
 
 ```
 
-### Reasons for No Vaccination
+### Exemptions
 
 **Inquiries**
 
@@ -168,7 +163,7 @@ Recent trends have shown that in states where there is a ban on personal exempti
   
 In May 2019, the Washington State Legislature passed a bill that removes the personal and philosophical option to exempt children from the MMR (measles, mumps, and rubella) vaccine required for school and child care entry. This law does not change religious and medical exemption laws. The data used to produce the charts is data from the 2017 school year, before the bill was passed. Although there will be a decline in the number of personal exemptions, there might be an increase in religious exemptions.
 
-### Immunization by County
+### By County
 ```{r, echo=FALSE}
 county_plot
 ```
@@ -177,17 +172,75 @@ To get a better grasp on the variation of immunization rates throughout the stat
 
 This figure shows us the variation of rates amongst different counties in the state which may allow us to draw out some interesting insights. An important takeway that we wanted to highlight from the results of this figure is to be cognisant of population densities within these individual counties and how they may affect the overall percentage and rate at which immunizations are taken. 
 
-### Immunization by District
+### By District
+From the Highest/Lowest Immunization Rates tab, we can see the ten school districts with the highest immunization rates and the ten school districts with the lowest immunization rates. 
+The Districts by Counties tab provides a visual comparison for all the school districts in the selected county. The WA state immunization rate, based on districts, is about 84%.
 
-Based on the data we have for WA state, we are also curious to see if there is a relationship between county and district in terms of immunization rates and population density. For example, King County consists of many school districts (i.e. Seattle, Issaquah, Federal Way, etc.), so if we were to take a look at the immunization rate for King County, the rates for the school districts, and the population density for each county, is there a trend? With this question, we also need to remember that the population not only consists of K-12 students, but infants, college students, adults, and the elderly as well. (Note: I have not reflected the population density into the visualizations yet.)
+Some factors that may play a role in low immunization rates are poor health care coverage or low income. Based on our data analysis and the following resources, we are able to determine whether or not these factors do impact immunization rates:
 
-The following visualizations show the ratio of students who have recieved all immunizations to those who have not based on district. The percentage was calculated by taking the total number of students who have recieved all immunizations divided by the total number of students enrolled in each district. A similar plot based on the counties has been provided for reference. 
+- [2017 Health Care Coverage](https://www.ofm.wa.gov/sites/default/files/public/dataresearch/researchbriefs/brief092.pdf)
+- [2016 - 2017 Free or Reduced Lunch](https://public.tableau.com/profile/havala.hanson#!/vizhome/Percentageofstudentseligibleforfreeorreduced-pricelunch/FRPL)
+- [2015 Student Poverty](http://viz.edbuild.org/maps/2015/dividing-lines/)
 
 ```{r districts_by_county, echo=FALSE, warning=FALSE}
-districts_top10_plot
-selectInput("County", label = "Select County", choices = names(districts_in_counties))
-renderPlotly(dis_plot_func(get(input$County), input$County))
-renderTable(get(input$County))
+tabsetPanel(
+  tabPanel("Highest/Lowest Immunization Rates",
+           p(""),
+           radioButtons("Ten", label = "Immunization Rates by School District",
+             choices = c("Highest", "Lowest"), selected = "Highest"),
+           p("The ten school districts with the highest immunization rates range from 97.91% to
+             100%, while the ten school districts with the lowest immunization rates range from 0%
+             to 55.55%."),
+           renderPlotly(get(input$Ten)),
+           p("After looking at the highest and lowest visualizations, we were curious to see if
+             the corresponding counties had similar immunization rates.")),
+  tabPanel("Districts by Counties",
+           p(""),
+           selectInput("County", label = "Select County", choices = names(districts_in_counties)),
+           p(renderText(paste("The average immunization rate for ", input$County, " county is: ",
+                            signif(mean(get(input$County)$Immunization_Percentage), 4), "%",
+                            sep = ""))),
+           renderPlotly(dis_plot_func(get(input$County), input$County)),
+           p("Few counties have relatively consistent rates among the districts (i.e. Whatcom
+             County) while majority of the counties have varying rates among the districts. Below
+             is a table based on the selected county that reflects the data and the number of
+             students who were exempt from immunizations."),
+           DT::renderDataTable(get(input$County), options = list(scrollX = TRUE),
+                               rownames = FALSE, colnames = c("School District",
+                                                              "K-12 Enrollment",
+                                                              "# Complete Immunization",
+                                                              "# Any Exemption",
+                                                              "# Medical Exemption",
+                                                              "# Personal Exemption",
+                                                              "# Religious Exemption",
+                                                              "# Religious Membership Exemption",
+                                                              "# Exempt: Diphtheria Tetanus",
+                                                              "# Exempt: Pertussis",
+                                                              "# Exempt: Measles, Mumps, Rubella",
+                                                              "# Exempt: Polio",
+                                                              "# Exempt: HepatitisB",
+                                                              "# Exempt: Varicella",
+                                                              "Immunization %", "County"))),
+  tabPanel("Analysis",
+           p("Based on the 2016-17 K-12 data used, we are able to see that some students are
+             exempt due to medical, personal, or religious reasons. A future application could
+             compare the exemption rates between the counties/districts to find the primary
+             factors for each county/districts."),
+           p("From the 2017 Health Care Coverage data, it appears that 94.5% of the WA population
+             does have access to health insurance, which seems to match up with 84% of the K-12
+             respondents who have gotten all the immunizations."),
+           p("However, the reasoning that lower income areas having lower immunization rates seems
+             to be a bit hazy based on comparisons of our data analysis, the 2016 - 2017 Free or
+             Reduced Lunch map, and 2015 Student Poverty map."),
+           p("For example, Othello School District has an immunization rate of 93.52%, a free or
+             reduced lunch rate of 82%, and student poverty rate of 23.7%. Methow Valley School
+             District has an immunization rate of 68.87%, free or reduced lunch rate of 40%, and
+             student poverty rate of 26.2%. While the Issaquah School district has an immunization
+             rate of 95.36%, free or reduced lunch rate of 8%, and student poverty rate of
+             4.7%."),
+           p("From varying comparisons, it seems that there is a slight correlation between low
+             income areas and low immunization rates, but there are also several outliers that
+             counter this trend.")))
 ```
 
 ### Conclusions
@@ -205,3 +258,10 @@ Although positive trend upwards were nice to see in regards to school enrollment
 
 ***
 A ban on personal exemptions may not be the best option to go about increasing vaccination completion among kids in school. Religious exemptions may be an increasingly problematic or outdated exemption category, and researchers and policy makers must work together to determine how best to balance a respect for religious liberty with the need to protect public health.
+
+***
+
+**By Districts**
+
+***
+While vaccination education is important, it is also important that everyone has means of obtaining them. There are varying reasons why some students are not fully immunized, but the factor of low income or lack of health care coverage should not be one of them. In order to raise the immunization rate in Washington state, health care policies should be modified and applied to ensure that everyone has safe access. Being able to recieve the necessary vaccines not only prevents one from getting ill, but also ensures that one will not incur [medical fees](https://www.cdc.gov/vaccines/programs/vfc/pubs/methods/index.html).
