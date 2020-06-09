@@ -49,7 +49,7 @@ The purpose of this project is to better educate and to bring potential issues t
 
 **The Dataset** 
 
-The dataset we’re using to gain more insight on this issue within the state is the [WA State K-12 Immunization Data 2016-2017](https://catalog.data.gov/dataset/all-students-kindergarten-through-12th-grade-immunization-data-by-school-2016-2017). It includes all the schools within the state and information on items such as the school population, location, percentage of vaccination exemptions (and what kind), percentage of how many students have all vaccinations, and much more. The data was downloaded from Data.gov which is managed and hosted by the U.S. General Services Administration, Technology Transformation Service. The data’s metadata was last updated January 16, 2020. For our analysis, we have filtered out the schools who did not report their vaccination data.
+The dataset we’re using to gain more insight on this issue within the state is the [WA State K-12 Immunization Data 2016-2017](https://catalog.data.gov/dataset/all-students-kindergarten-through-12th-grade-immunization-data-by-school-2016-2017). It includes all the schools within the state and information on items such as the school population, location, percentage of vaccination exemptions (and what kind), percentage of how many students have all vaccinations, and much more. The data was downloaded from Data.gov which is managed and hosted by the U.S. General Services Administration, Technology Transformation Service. The data’s metadata was last updated January 16, 2020. For our analysis, **we have filtered out the schools who did not report their vaccination data**.
 
 ### Enrollment
 
