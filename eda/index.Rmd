@@ -41,9 +41,15 @@ The middle of the 20th century was an active time for vaccine research and devel
 
 **Domain of Interest**
 
-The domain we originally started with was vaccinations. This domain piqued our interest as it’s a public health area that’s currently been getting more coverage especially as groups of anti-vaxxers are on the rise and there is a strong push to get a vaccine for COVID-19. Vaccines are also a public health intervention that can prevent or provide protection against many infections and diseases.
+The domain this project focuses on is vaccinations within Washington State; more specifically Immunizations in the K-12 schools. This domain piqued our interest as it’s a public health area that’s currently been getting more coverage especially as groups of anti-vaxxers are on the rise and there is a strong push to get a vaccine for COVID-19. We also decided to focus on Washington State as it’s where we all currently reside, so we thought it would be interesting to learn more about a topic that’s very important, in a place that impacts us.
 
-The domain we narrowed our assignment to was vaccinations within K-12 schools in Washington State. The dataset we’re using to gain more insight on this issue within the state is the [WA State K-12 Immunization Data 2016-2017](https://catalog.data.gov/dataset/all-students-kindergarten-through-12th-grade-immunization-data-by-school-2016-2017). It includes all the schools within the state and information on items such as the school population, location, percentage of vaccination exemptions (and what kind), percentage of how many students have all vaccinations, and much more. The data was downloaded from Data.gov which is managed and hosted by the U.S. General Services Administration, Technology Transformation Service. The data’s metadata was last updated January 16, 2020. For our analysis, we have filtered out the schools who did not report their vaccination data.
+**Purpose**
+
+The purpose of this project is to better educate and to bring potential issues to light for law/policy makers, parents, and the general public in regards to the topic of vaccinations within the K-12 system. As students invested in the well being of individuals and populations, we decided that investigating the topic of vaccinations is important as there are many infectious or serious infections and [diseases that can be prevented by vaccinations](https://www.cdc.gov/vaccines/vpd/vaccines-diseases.html) such as chickenpox, the Flu, HPV, Meningococcal Meningitis, and Whooping Cough. 
+
+**The Dataset** 
+
+The dataset we’re using to gain more insight on this issue within the state is the [WA State K-12 Immunization Data 2016-2017](https://catalog.data.gov/dataset/all-students-kindergarten-through-12th-grade-immunization-data-by-school-2016-2017). It includes all the schools within the state and information on items such as the school population, location, percentage of vaccination exemptions (and what kind), percentage of how many students have all vaccinations, and much more. The data was downloaded from Data.gov which is managed and hosted by the U.S. General Services Administration, Technology Transformation Service. The data’s metadata was last updated January 16, 2020. For our analysis, we have filtered out the schools who did not report their vaccination data.
 
 ### Enrollment
 
@@ -155,7 +161,11 @@ renderPlotly({
 })
 ```
 
+***
+
 **Research and Future Implications**
+
+***
 
 Another cause for concern is the number of disease outbreaks attributed to religious groups. For example, since recorded in September 2018, there are 535 confirmed cases of measles among Orthodox Jewish communities in Brooklyn and Queens alone, a disease previously declared eradicated in the U.S. in year 2000.
   
