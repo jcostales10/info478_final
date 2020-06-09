@@ -1,0 +1,12 @@
+name: test
+title: test
+username:
+account: jcostales
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2429558
+bundleId: 3246643
+url: https://jcostales.shinyapps.io/test/
+when: 1591696363.79603
+asMultiple: FALSE
+asStatic: FALSE

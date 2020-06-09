@@ -1,6 +1,6 @@
 ---
 title: "Analysis of K-12 Immunization in WA State (2016-17)"
-author: "Azim Abdul Wahid, Hannah Chung, Michelle To, Jamie Costales"
+author: "Azim Wahid, Hannah Chung, Michelle To, Jamie Costales"
 date: "6/8/2020"
 output: html_document
 runtime: shiny
@@ -8,20 +8,261 @@ runtime: shiny
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
-source("../scripts/enrollment.R")
-source("../scripts/exemptions.R")
-source("../scripts/districts_by_county.R")
-
-#install.packages("DT")
-
-library(ggplot2)
-library(shiny)
-library(knitr)
+library(tidyverse)
 library(plotly)
-library(DT)
-library(maps)
-library(mapproj)
+library(shiny)
+
+vac_2017 <- read.csv("immunization_2017.csv", stringsAsFactors = F)
+
+library(tidyverse)
+library(plotly)
+
+# ------------------------ ENROLLMENT ------------------------ 
+
+# vac_2017 <- read.csv("../data/immunization_2017.csv", stringsAsFactors = F)
+
+# filter out all the schools not reported
+reported_only <- vac_2017 %>%
+  filter(Reported == "Y") %>%
+  select(School_Name, K_12_enrollment, Percent_complete_for_all_immunizations)
+
+# mean school enrollment size in the whole state
+mean_enrollment <- reported_only %>%
+  select(K_12_enrollment) %>%
+  summarise(mean = mean(K_12_enrollment)) %>%
+  pull(mean)
+
+# mean percentage complete for all vaccinations in the whole state
+mean_perc_vacinated <- reported_only %>%
+  select(Percent_complete_for_all_immunizations) %>%
+  summarise(mean = mean(Percent_complete_for_all_immunizations)) %>%
+  pull(mean)
+
+# group by county
+county_summary_stats <- vac_2017 %>%
+  filter(Reported == "Y") %>%
+  group_by(County) %>%
+  summarise(
+    mean_enrollment = mean(K_12_enrollment),
+    mean_perc_complete_all_vacinations = mean(Percent_complete_for_all_immunizations),
+    mean_perc_medical_excemption = mean(Percent_with_any_exemption),
+    mean_perc_personal_excemption = mean(Percent_with_personal_exemption),
+    mean_perc_religous_excemption = mean(Percent_with_religious_exemption),
+    mean_perc_religous_mem_excemption = mean(Percent_with_religious_membership_exemption)
+  )
+
+
+# axis labels 
+f <- list(
+  family = "Courier New, monospace",
+  size = 18,
+  color = "#7f7f7f"
+)
+
+x <- list(
+  title = "Mean School Enrollment Size",
+  titlefont = f
+)
+y <- list(
+  title = "Mean Percent Complete of All Vacinations",
+  titlefont = f
+)
+
+# plotly graph
+fit <- lm(mean_perc_complete_all_vacinations ~ mean_enrollment, data = county_summary_stats)
+
+
+enrollment_perc_complete_plotly <- county_summary_stats %>% 
+  plot_ly(x = ~mean_enrollment, text = ~paste("County: ", County)) %>% 
+  add_markers(y = ~mean_perc_complete_all_vacinations) %>% 
+  add_lines(x = ~mean_enrollment, y = fitted(fit)) %>%
+  layout(
+    title = "WA K - 12 Enrollment Sizes and % Vaccinated with All Vaccines by County",
+    xaxis = x, 
+    yaxis = y,
+    showlegend = FALSE)
+
+# --------- added things for final deliverable 
+
+attach(vac_2017)
+county_counts <- vac_2017 %>%
+  select(County) %>% 
+  aggregate(by = list(County), FUN= length) %>%
+  rename(count = County) %>%
+  rename(County = Group.1)
+
+top_three_enrollment <- vac_2017 %>%
+  filter(Reported == "Y") %>% 
+  group_by(County) %>%
+  summarise(
+    total = sum(K_12_enrollment)
+  ) %>%
+  arrange(-total) %>%
+  top_n(3) %>%
+  pull(County)
+
+top_three_enrollment_values <- vac_2017 %>%
+  filter(Reported == "Y") %>% 
+  group_by(County) %>%
+  summarise(
+    total = sum(K_12_enrollment)
+  ) %>%
+  arrange(-total) %>%
+  top_n(3) %>%
+  pull(total)
+
+bottom_three_enrollment <- vac_2017 %>%
+  filter(Reported == "Y") %>% 
+  group_by(County) %>%
+  summarise(
+    total = sum(K_12_enrollment)
+  ) %>%
+  arrange(-total) %>%
+  top_n(-3) %>%
+  pull(County)
+
+bottom_three_enrollment_values <- vac_2017 %>%
+  filter(Reported == "Y") %>% 
+  group_by(County) %>%
+  summarise(
+    total = sum(K_12_enrollment)
+  ) %>%
+  arrange(-total) %>%
+  top_n(-3) %>%
+  pull(total)
+
+
+# bottom three vac percent 
+bottom_three_vac_perc <- vac_2017 %>%
+  filter(Reported == "Y") %>% 
+  group_by(County) %>%
+  summarise(
+    total = mean(Percent_complete_for_all_immunizations)
+  ) %>%
+  arrange(-total) %>%
+  top_n(-3) %>%
+  pull(County)
+
+bottom_three_vac_perc_values <- vac_2017 %>%
+  filter(Reported == "Y") %>% 
+  group_by(County) %>%
+  summarise(
+    total = mean(Percent_complete_for_all_immunizations)
+  ) %>%
+  arrange(-total) %>%
+  top_n(-3) %>%
+  pull(total)
+
+# --------------- DISTRICTS --------------------
+
+
+#install.packages("maps")
+#install.packages("mapproj")
+#install.packages("plotly")
+#install.packages("rjson")
+
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library("maps")
+library("mapproj")
+
+
+
+# Filter data to columns used 
+data <- filter(vac_2017, Reported == "Y") %>%
+  select(-Reported, -School_Name, -School_year, -ESD, -Grade_Levels,
+         -Has_kindergarten, -Has_6thGrade, -Location.1, -contains("Percent"))
+
+# Data frame to keep track of which district is in which county
+counties_districts <- select(data, School_District, County) %>%
+  distinct(School_District, .keep_all = TRUE)
+
+# County data frame
+counties_data <- select(data, -School_District, -County) %>%
+  aggregate(list(data$County), sum) %>%
+  mutate(Immunization_Percentage = (Number_complete_for_all_immunizations/K_12_enrollment) * 100)
+colnames(counties_data)[1] <- "County"
+counties_plot <- counties_data %>%
+  plot_ly(x = ~Immunization_Percentage, y = ~County, name = "Immunization Rate in each County",
+          type = "bar", color = ~County, text = ~paste(County, ": ", signif(Immunization_Percentage, 4), "%", sep = ""),
+          hoverinfo = 'text') %>%
+  layout(
+    title = "Immunization Rate in each County",
+    xaxis = list(title = "Students with Complete Immunization (%)"),
+    showlegend = FALSE)
+county_list <- counties_data$County
+
+# Districts data frame
+districts_data <- select(data, -School_District, -County) %>%
+  aggregate(list(data$School_District), sum) %>%
+  mutate(Immunization_Percentage = (Number_complete_for_all_immunizations/K_12_enrollment) * 100)
+colnames(districts_data)[1] <- "School_District"
+districts_data <- inner_join(districts_data, counties_districts, by = "School_District")
+districts_in_counties <- split(districts_data, districts_data$County) 
+
+for(i in 1:length(districts_in_counties)){
+  assign(paste(names(districts_in_counties[i])), as.data.frame(districts_in_counties[[i]]))
+}
+
+dis_plot_func <- function(county_input, county){
+   district_plot <- county_input %>%
+    plot_ly(x = ~Immunization_Percentage, y = ~School_District, name = "Immunization Rate in each District",
+            type = "bar", color = ~School_District, text = ~paste(School_District, ": ", signif(Immunization_Percentage, 4), "%", sep = ""),
+            hoverinfo = 'text') %>%
+    layout(
+      title = paste("Immunization Rate in ", county, " County", sep = ""),
+      xaxis = list(title = "Students with Complete Immunization (%)"),
+      yaxis = list(title = "School District"),
+      showlegend = FALSE)
+  return(district_plot)
+  }
+
+#---------------------------------------------------------------------------------------------
+
+districts_data <- rename(districts_data, subregion = County)
+
+# -------------- map of counties --------------
+map_df <- map_data("county") %>%
+  filter(region == "washington") %>%
+  mutate(subregion = toupper(subregion))
+
+subregion_data <- districts_data %>% 
+  group_by(subregion) %>%
+  summarize(Immunization_Percentage =
+              sum(as.integer(Number_complete_for_all_immunizations))/sum(as.integer(K_12_enrollment))*100,
+            K_12_enrollment = sum(as.integer(K_12_enrollment)),
+            )
+
+county_maps <- left_join(map_df, subregion_data, by = "subregion") 
+
+county_maps$bins <- cut(
+  county_maps$Immunization_Percentage,
+  breaks =c(
+    0, 50, 80, 85, 90, 93, 95, 100
+  ),
+  labels=c(
+    "0-50% ",
+    "50-80% ",
+    "80-85%",
+    "85-90%",
+    "90-93%",
+    "93-95%",
+    "95-100"
+   
+  )
+)
+  
+county_plot <- ggplot(county_maps) + 
+    geom_polygon(aes(x = long, y = lat, group = group, fill = bins)) +
+  scale_fill_brewer(palette = "Blues") +
+  coord_quickmap() +
+  labs(title = " % Immunizations by County 2017", fill = "Immunization Percentage") +
+  theme_void()
+
+
+
 ```
 
 ## {.tabset}
@@ -53,9 +294,9 @@ The dataset we’re using to gain more insight on this issue within the state is
 
 ### Enrollment
 
-```{r enrollment_stats, echo=FALSE}
-enrollment <- mean_enrollment
-vacinated <- mean_perc_vacinated
+```{r enrollment_stats, echo=FALSE, error=FALSE, message=FALSE}
+
+
 ```
 
 **Inquiries**
@@ -70,7 +311,10 @@ Another question that stems off the previous was “what are the possible trends
 
 ***
 
-```{r enrollment_static, echo=FALSE}
+```{r enrollment_static, echo=FALSE, , error=FALSE, message=FALSE}
+library(plotly)
+library(shiny)
+
 enrollment_perc_complete_plotly
 ```
 
@@ -86,16 +330,20 @@ When viewed individually, there is a lot of variation between each county in ter
 
 The counties with the lowest percent complete all vaccinations are `r bottom_three_vac_perc` with the respective values of `r bottom_three_vac_perc_values` percents which were interesting explore as Stevens and Jefferson both had strongly positive trends although their averages, when compared to everyone else', were fairly lower. San Juan on the other hand had a trendline that was mostly flat, but had a slight negative tilt. It was interesting to see the plots of separate counties as Stevens and Jefferson support the potential relationship between school size and percent all vaccinated, however their low values as an average signal that there is can still be a lot done to better vaccination rates within each county specifically. 
 
+
 ```{r enrollment_plotly, echo=FALSE}
 
-inputPanel(
+library(plotly)
+library(shiny)
+
+
   selectInput(
   "county_choice", 
   label = h3("Choose County"), 
   choices = county_counts$County, 
   selected = 1)
 
-)
+
 
 
 renderPlotly ({
@@ -123,8 +371,6 @@ renderPlotly ({
     return(scatterplot)
      
   })
-
-
 ```
 
 ### Exemptions
@@ -136,6 +382,53 @@ We wanted to know more about the distribution of the reasons for not vaccinating
 This pie chart displays the count and percentage of the different reasons for not vaccinating. We can deduce that not vaccinating due to personal exemption makes up 71.6% (44,104 children) of the total number of children (61,598 children) who didn’t get vaccinated. We see that we should be focusing our efforts in targeting children who have personal exemptions.
 
 ```{r exemptions, echo=FALSE}
+
+library(tidyverse)
+library(plotly)
+
+
+# Count total of all exemptions
+
+# filter out all the schools not reported and keep necessary columns
+reported_only <- vac_2017 %>%
+  filter(Reported == "Y") %>%
+  select(School_Name, Number_with_medical_exemption,
+         Number_with_personal_exemption, Number_with_religious_exemption,
+         Number_with_religious_membership_exemption)
+
+
+# calculate sum of exemptions and rename columns
+exemption_sums <- reported_only %>%
+  summarize(
+    count_medical_exemption = sum(Number_with_medical_exemption),
+    count_personal_exemption = sum(Number_with_personal_exemption),
+    count_religious_exemption = sum(Number_with_religious_exemption),
+    count_religious_membership_exemption = sum(Number_with_religious_membership_exemption)
+  ) %>%
+  rename("Personal exemption" = count_personal_exemption) %>%
+  rename("Medical exemption" = count_medical_exemption) %>%
+  rename("Religious exemption" = count_religious_exemption) %>%
+  rename("Religious membership exemption" = count_religious_membership_exemption)
+  
+# organized exemption_sums to make it easy to work with
+exemption_summary <- exemption_sums %>%
+  gather(key = "reasons", value = "count",
+         "Personal exemption", "Medical exemption",
+         "Religious exemption", "Religious membership exemption") %>%
+  arrange(-count)
+
+# plotly piechart to display counts and percentages
+exemption_vis <- plot_ly(data = exemption_summary, labels = ~reasons,
+                         values = ~count, type = 'pie')
+
+exemption_vis <- exemption_vis %>%
+  layout(title = 'Exemption Count and Percentages',
+         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+  
+
+
+
 
 inputPanel(
   checkboxGroupInput(
@@ -183,7 +476,11 @@ In May 2019, the Washington State Legislature passed a bill that removes the per
 
 ### By County
 ```{r, echo=FALSE}
+
+library(plotly)
+renderPlot({
 county_plot
+})
 ```
 
 To get a better grasp on the variation of immunization rates throughout the state we decided to map out the rates at which counties had immunizations based on data collected from those attending K-12 education. The percentage of immunizations were calculated by dividing the number of complete immunizations in students by the total number of students enrolled. 
@@ -200,66 +497,7 @@ Some factors that may play a role in low immunization rates are poor health care
 - [2016 - 2017 Free or Reduced Lunch](https://public.tableau.com/profile/havala.hanson#!/vizhome/Percentageofstudentseligibleforfreeorreduced-pricelunch/FRPL)
 - [2015 Student Poverty](http://viz.edbuild.org/maps/2015/dividing-lines/)
 
-```{r districts_by_county, echo=FALSE, warning=FALSE}
-tabsetPanel(
-  tabPanel("Highest/Lowest Immunization Rates",
-           p(""),
-           radioButtons("Ten", label = "Immunization Rates by School District",
-             choices = c("Highest", "Lowest"), selected = "Highest"),
-           p("The ten school districts with the highest immunization rates range from 97.91% to
-             100%, while the ten school districts with the lowest immunization rates range from 0%
-             to 55.55%."),
-           renderPlotly(get(input$Ten)),
-           p("After looking at the highest and lowest visualizations, we were curious to see if
-             the corresponding counties had similar immunization rates.")),
-  tabPanel("Districts by Counties",
-           p(""),
-           selectInput("County", label = "Select County", choices = names(districts_in_counties)),
-           p(renderText(paste("The average immunization rate for ", input$County, " county is: ",
-                            signif(mean(get(input$County)$Immunization_Percentage), 4), "%",
-                            sep = ""))),
-           renderPlotly(dis_plot_func(get(input$County), input$County)),
-           p("Few counties have relatively consistent rates among the districts (i.e. Whatcom
-             County) while majority of the counties have varying rates among the districts. Below
-             is a table based on the selected county that reflects the data and the number of
-             students who were exempt from immunizations."),
-           DT::renderDataTable(get(input$County), options = list(scrollX = TRUE),
-                               rownames = FALSE, colnames = c("School District",
-                                                              "K-12 Enrollment",
-                                                              "# Complete Immunization",
-                                                              "# Any Exemption",
-                                                              "# Medical Exemption",
-                                                              "# Personal Exemption",
-                                                              "# Religious Exemption",
-                                                              "# Religious Membership Exemption",
-                                                              "# Exempt: Diphtheria Tetanus",
-                                                              "# Exempt: Pertussis",
-                                                              "# Exempt: Measles, Mumps, Rubella",
-                                                              "# Exempt: Polio",
-                                                              "# Exempt: HepatitisB",
-                                                              "# Exempt: Varicella",
-                                                              "Immunization %", "County"))),
-  tabPanel("Analysis",
-           p("Based on the 2016-17 K-12 data used, we are able to see that some students are
-             exempt due to medical, personal, or religious reasons. A future application could
-             compare the exemption rates between the counties/districts to find the primary
-             factors for each county/districts."),
-           p("From the 2017 Health Care Coverage data, it appears that 94.5% of the WA population
-             does have access to health insurance, which seems to match up with 84% of the K-12
-             respondents who have gotten all the immunizations."),
-           p("However, the reasoning that lower income areas having lower immunization rates seems
-             to be a bit hazy based on comparisons of our data analysis, the 2016 - 2017 Free or
-             Reduced Lunch map, and 2015 Student Poverty map."),
-           p("For example, Othello School District has an immunization rate of 93.52%, a free or
-             reduced lunch rate of 82%, and student poverty rate of 23.7%. Methow Valley School
-             District has an immunization rate of 68.87%, free or reduced lunch rate of 40%, and
-             student poverty rate of 26.2%. While the Issaquah School district has an immunization
-             rate of 95.36%, free or reduced lunch rate of 8%, and student poverty rate of
-             4.7%."),
-           p("From varying comparisons, it seems that there is a slight correlation between low
-             income areas and low immunization rates, but there are also several outliers that
-             counter this trend.")))
-```
+
 
 ### Conclusions
 
