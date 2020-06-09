@@ -156,17 +156,12 @@ bottom_three_vac_perc_values <- vac_2017 %>%
 # --------------- DISTRICTS --------------------
 
 
-#install.packages("maps")
-#install.packages("mapproj")
-#install.packages("plotly")
-#install.packages("rjson")
-
 library(tidyr)
 library(dplyr)
 library(ggplot2)
 library(plotly)
-library("maps")
-library("mapproj")
+library(maps)
+library(mapproj)
 
 
 
@@ -182,22 +177,35 @@ counties_districts <- select(data, School_District, County) %>%
 # County data frame
 counties_data <- select(data, -School_District, -County) %>%
   aggregate(list(data$County), sum) %>%
-  mutate(Immunization_Percentage = (Number_complete_for_all_immunizations/K_12_enrollment) * 100)
+  mutate(Immunization_Percentage = (Number_complete_for_all_immunizations/K_12_enrollment) * 100) %>%
+  dplyr::arrange(-Immunization_Percentage)
 colnames(counties_data)[1] <- "County"
-counties_plot <- counties_data %>%
-  plot_ly(x = ~Immunization_Percentage, y = ~County, name = "Immunization Rate in each County",
-          type = "bar", color = ~County, text = ~paste(County, ": ", signif(Immunization_Percentage, 4), "%", sep = ""),
-          hoverinfo = 'text') %>%
-  layout(
-    title = "Immunization Rate in each County",
-    xaxis = list(title = "Students with Complete Immunization (%)"),
-    showlegend = FALSE)
+#counties_plot <- counties_data %>%
+#  plot_ly(x = ~Immunization_Percentage, y = ~County, name = "Immunization Rate in each County",
+#          type = "bar", color = ~County, text = ~paste(County, ": ", Immunization_Percentage, "%", sep = ""),
+#          hoverinfo = 'text') %>%
+#  layout(
+#    title = "Immunization Rate in each County",
+#    xaxis = list(title = "Students with Complete Immunization (%)"),
+#    showlegend = FALSE)
 county_list <- counties_data$County
 
+# Top 10 Counties
+#counties_top10 <- top_n(counties_data, 10, Immunization_Percentage)
+#counties_top10_plot <- counties_top10 %>%
+#  plot_ly(x = ~Immunization_Percentage, y = ~County, name = "Highest Immunization Rates by County",
+#          type = "bar", color = ~County, text = ~paste(County, ": ", signif(Immunization_Percentage, 4), "%", sep = ""),
+#          hoverinfo = 'text') %>%
+#  layout(
+#    title = "Highest Immunization Rates by County",
+#    xaxis = list(title = "Students with Complete Immunization (%)"),
+#    showlegend = FALSE)
+
 # Districts data frame
-districts_data <- select(data, -School_District, -County) %>%
+districts_data <- dplyr::select(data, -School_District, -County) %>%
   aggregate(list(data$School_District), sum) %>%
-  mutate(Immunization_Percentage = (Number_complete_for_all_immunizations/K_12_enrollment) * 100)
+  mutate(Immunization_Percentage = (Number_complete_for_all_immunizations/K_12_enrollment) * 100) %>%
+  dplyr::arrange(-Immunization_Percentage)
 colnames(districts_data)[1] <- "School_District"
 districts_data <- inner_join(districts_data, counties_districts, by = "School_District")
 districts_in_counties <- split(districts_data, districts_data$County) 
@@ -208,16 +216,46 @@ for(i in 1:length(districts_in_counties)){
 
 dis_plot_func <- function(county_input, county){
    district_plot <- county_input %>%
-    plot_ly(x = ~Immunization_Percentage, y = ~School_District, name = "Immunization Rate in each District",
+    plot_ly(x = ~Immunization_Percentage, y = ~School_District, name = "Immunization Rates in each District",
             type = "bar", color = ~School_District, text = ~paste(School_District, ": ", signif(Immunization_Percentage, 4), "%", sep = ""),
             hoverinfo = 'text') %>%
     layout(
-      title = paste("Immunization Rate in ", county, " County", sep = ""),
+      title = paste("Immunization Rates in ", county, " County", sep = ""),
       xaxis = list(title = "Students with Complete Immunization (%)"),
       yaxis = list(title = "School District"),
       showlegend = FALSE)
   return(district_plot)
-  }
+}
+
+# WA Average
+WA_average <- mean(districts_data$Immunization_Percentage)
+
+# Top 10 Districts
+districts_top10 <- top_n(districts_data, 10, Immunization_Percentage)
+Highest <- districts_top10 %>%
+  plot_ly(x = ~Immunization_Percentage, y = ~School_District, name = "Highest Immunization Rates by School District",
+          type = "bar", color = ~School_District, text = ~paste(School_District, " in ", County, " County: ", signif(Immunization_Percentage, 4), "%", sep = ""),
+          hoverinfo = 'text') %>%
+  layout(
+    title = "Highest Immunization Rates by School District",
+    xaxis = list(title = "Students with Complete Immunization (%)"),
+    yaxis = list(title = "School District"),
+    showlegend = FALSE)
+districts_low10 <- top_n(districts_data, 10, -Immunization_Percentage)
+Lowest <- districts_low10 %>%
+  plot_ly(x = ~Immunization_Percentage, y = ~School_District, name = "Lowest Immunization Rates by School District",
+          type = "bar", color = ~School_District, text = ~paste(School_District, " in ", County, " County: ", signif(Immunization_Percentage, 4), "%", sep = ""),
+          hoverinfo = 'text') %>%
+  layout(
+    title = "Lowest Immunization Rates by School District",
+    xaxis = list(title = "Students with Complete Immunization (%)"),
+    yaxis = list(title = "School District"),
+    showlegend = FALSE) %>%
+  add_annotations(
+    text = "QUEETS-CLEARWATER SCHOOL DISTRICT in CLALLAM County: 0%",
+    x = 20,
+    y = "QUEETS-CLEARWATER SCHOOL DISTRICT",
+    showarrow = FALSE)
 
 #---------------------------------------------------------------------------------------------
 
@@ -255,11 +293,12 @@ county_maps$bins <- cut(
 )
   
 county_plot <- ggplot(county_maps) + 
-    geom_polygon(aes(x = long, y = lat, group = group, fill = bins)) +
-  scale_fill_brewer(palette = "Blues") +
+    geom_polygon(aes(x = long, y = lat, group = group, fill = bins), colour = "black") +
+  scale_fill_brewer(palette = "YlOrRd") +
   coord_quickmap() +
   labs(title = " % Immunizations by County 2017", fill = "Immunization Percentage") +
   theme_void()
+
 
 
 
@@ -497,7 +536,67 @@ Some factors that may play a role in low immunization rates are poor health care
 - [2016 - 2017 Free or Reduced Lunch](https://public.tableau.com/profile/havala.hanson#!/vizhome/Percentageofstudentseligibleforfreeorreduced-pricelunch/FRPL)
 - [2015 Student Poverty](http://viz.edbuild.org/maps/2015/dividing-lines/)
 
-
+```{r districts_by_county, echo=FALSE, warning=FALSE}
+library(shiny)
+tabsetPanel(
+  tabPanel("Highest/Lowest Immunization Rates",
+           p(""),
+           radioButtons("Ten", label = "Immunization Rates by School District",
+             choices = c("Highest", "Lowest"), selected = "Highest"),
+           p("The ten school districts with the highest immunization rates range from 97.91% to
+             100%, while the ten school districts with the lowest immunization rates range from 0%
+             to 55.55%."),
+           renderPlotly(get(input$Ten)),
+           p("After looking at the highest and lowest visualizations, we were curious to see if
+             the corresponding counties had similar immunization rates.")),
+  tabPanel("Districts by Counties",
+           p(""),
+           selectInput("County", label = "Select County", choices = names(districts_in_counties)),
+           p(renderText(paste("The average immunization rate for ", input$County, " county is: ",
+                            signif(mean(get(input$County)$Immunization_Percentage), 4), "%",
+                            sep = ""))),
+           renderPlotly(dis_plot_func(get(input$County), input$County)),
+           p("Few counties have relatively consistent rates among the districts (i.e. Whatcom
+             County) while majority of the counties have varying rates among the districts. Below
+             is a table based on the selected county that reflects the data and the number of
+             students who were exempt from immunizations."),
+           DT::renderDataTable(get(input$County), options = list(scrollX = TRUE),
+                               rownames = FALSE, colnames = c("School District",
+                                                              "K-12 Enrollment",
+                                                              "# Complete Immunization",
+                                                              "# Any Exemption",
+                                                              "# Medical Exemption",
+                                                              "# Personal Exemption",
+                                                              "# Religious Exemption",
+                                                              "# Religious Membership Exemption",
+                                                              "# Exempt: Diphtheria Tetanus",
+                                                              "# Exempt: Pertussis",
+                                                              "# Exempt: Measles, Mumps, Rubella",
+                                                              "# Exempt: Polio",
+                                                              "# Exempt: HepatitisB",
+                                                              "# Exempt: Varicella",
+                                                              "Immunization %", "County"))),
+  tabPanel("Analysis",
+           p("Based on the 2016-17 K-12 data used, we are able to see that some students are
+             exempt due to medical, personal, or religious reasons. A future application could
+             compare the exemption rates between the counties/districts to find the primary
+             factors for each county/districts."),
+           p("From the 2017 Health Care Coverage data, it appears that 94.5% of the WA population
+             does have access to health insurance, which seems to match up with 84% of the K-12
+             respondents who have gotten all the immunizations."),
+           p("However, the reasoning that lower income areas having lower immunization rates seems
+             to be a bit hazy based on comparisons of our data analysis, the 2016 - 2017 Free or
+             Reduced Lunch map, and 2015 Student Poverty map."),
+           p("For example, Othello School District has an immunization rate of 93.52%, a free or
+             reduced lunch rate of 82%, and student poverty rate of 23.7%. Methow Valley School
+             District has an immunization rate of 68.87%, free or reduced lunch rate of 40%, and
+             student poverty rate of 26.2%. While the Issaquah School district has an immunization
+             rate of 95.36%, free or reduced lunch rate of 8%, and student poverty rate of
+             4.7%."),
+           p("From varying comparisons, it seems that there is a slight correlation between low
+             income areas and low immunization rates, but there are also several outliers that
+             counter this trend.")))
+```
 
 ### Conclusions
 
