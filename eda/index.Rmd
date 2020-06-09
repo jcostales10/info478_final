@@ -48,26 +48,42 @@ The domain we narrowed our assignment to was vaccinations within K-12 schools in
 
 ### Enrollment and Vaccines
 
-
-
-#### Comparing the Average School Size by County to Their Immunization %
-
-
-```{r enrollment_static, echo=FALSE}
-enrollment_perc_complete_plotly
-
+```{r enrollment_stats, echo=FALSE}
 enrollment <- mean_enrollment
 vacinated <- mean_perc_vacinated
 
 ```
 
+**Inquiries**
+
+
+One of the overarching questions we wanted to explore further was “do higher percentages of all vaccinations completed have some relationship to a school’s enrollment size?” We thought that this would be a good question to investigate since larger school populations meant that a larger group of people could be exposed and impacted if an infection were to happen. Before creating any of the plots, we found that the mean enrollment size in each school in the state  is `r mean_enrollment` and that the mean percentage complete for all vaccinations in the whole state is `r mean_perc_vacinated`. 
+
+Another question that stems off the previous was “what are the possible trends like for the schools in each county?”. As one of our main target audience members were lawmakers, we wanted to give them the ability to focus in on their county specifically and learn which schools may have lower/higher percent completion for all vaccinations. This could also be beneficial for our other target audience of parents as they can see how their school may contribute to the trendline for the county.
+
+***
+
+**Addressing the First Question: Viewing WA as a whole**
+
+***
+
+```{r enrollment_static, echo=FALSE}
+enrollment_perc_complete_plotly
+
+```
+
+The ‘WA K-12 Enrollment Sizes and % Vaccinated with All Vaccines by County’ plot compares the counties within the state and provides their average enrollments and average percent of having completed all vaccinations. The trendline shows that there is a slight positive correlation which can indicate that larger schools tend to have a higher percentage of children in their school who have received all vaccinations. It can indicate that as a state, we are headed towards a positive direction, but there are still outliers that remind us that we can still do better, which can be a call to action to lawmakers.
+
+***
  
-A question we wanted to answer was “do larger schools have higher percentages of all vaccinations completed?” We thought that larger schools may push or require its families to vaccinate their children as disease could spread faster and impact more people due to a larger population that is typically in close contact. Before creating this plot, we found that the mean enrollment size in each school in the state  is `r mean_enrollment` students and that the mean percentage complete for all vaccinations in the whole state is `r mean_perc_vacinated`. 
+**Addressing the Second Question: Comparing Trends of Specific Counties**
 
-This plot compares the counties within the state and provides their average enrollments and average percent of having completed all vaccinations. The trendline shows that there is a slight positive correlation which can indicate that larger schools have more children who have received all vaccinations.
+***
 
+When viewed individually, there is a lot of variation between each county in terms of vaccination trend, number of schools per county, and where their distributions typically fall. According to [outside research](https://worldpopulationreview.com/states/washington-population/) and some data wrangling in R, the most densely populated counties and counties with the most enrolled students within Washington are `r top_three_enrollment` with the respective values of `r top_three_enrollment_values` students. The trends for these population dense counties, which also encapsulate many individual schools, are only slightly positive with lines that are almost flat but have a slight tilt upward to the right. This could signal that there may also not be a correlation between enrollment size and percent complete immunized/school. The counties with the smallest enrollment sizes are `r bottom_three_enrollment` with the respective values of `r bottom_three_enrollment_values` students which all show either strongly positive trends or no trend at all due to lack of supplemental points.
 
-**Comparing Schools Within a Specific County And Immunization %**
+The counties with the lowest percent complete all vaccinations are `r bottom_three_vac_perc` with the respective values of `r bottom_three_vac_perc_values` percents which were interesting explore as Stevens and Jefferson both had strongly positive trends although their averages, when compared to everyone else', were fairly lower. San Juan on the other hand had a trendline that was mostly flat, but had a slight negative tilt. It was interesting to see the plots of separate counties as Stevens and Jefferson support the potential relationship between school size and percent all vaccinated, however their low values as an average signal that there is can still be a lot done to better vaccination rates within each county specifically. 
+
 
 ```{r enrollment_plotly, echo=FALSE}
 selectInput(
@@ -176,4 +192,16 @@ renderTable(get(input$County))
 
 ### Conclusions
 
+***
+
+**In Terms of Enrollment**
+
+***
+Although positive trend upwards were nice to see in regards to school enrollment sizes and percent complete - all vaccinations which meant that students with higher populations typically also had higher percentages of students who had completed all their vaccinations, it is also important to remember in this case that the goal is to see a flatter trendline positioned at around 95% or higher throughout Washington and for each county as this would indicate that each school, regardless of their enrollment size, has herd immunity throughout as most of the student body is completely immunized. Since this is not the case for many counties in Washington, and Washington as a whole, there is still a lot of work and advocacy to be done by parents, the general public, and lawmakers to ensure that the amount of students who receive all their vaccinations are accomplished. This is especially more pressing in these times of COVID-19 as when a vaccine is achieved in the future, it's important that there are policies in place that allow for herd immunity to be reached as we've seen how easily COVID-19 can be spread along with how fatal it can be. With that, there also comes the issues that are tied to vaccination/the ability to get vaccinated such as the costs of vaccines and their accessibility. There is still a lot to be done, and we hope that through the visualizations and analysis presented, policy/lawmakers, parents, and the general public now have a better understanding of vaccinations within a frame of enrollment size.
+
+***
+
+**In Terms of Excemptions**
+
+***
 A ban on personal exemptions may not be the best option to go about increasing vaccination completion among kids in school. Religious exemptions may be an increasingly problematic or outdated exemption category, and researchers and policy makers must work together to determine how best to balance a respect for religious liberty with the need to protect public health.

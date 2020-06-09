@@ -82,3 +82,65 @@ county_counts <- vac_2017 %>%
   aggregate(by = list(County), FUN= length) %>%
   rename(count = County) %>%
   rename(County = Group.1)
+
+top_three_enrollment <- vac_2017 %>%
+  filter(Reported == "Y") %>% 
+  group_by(County) %>%
+  summarise(
+    total = sum(K_12_enrollment)
+  ) %>%
+  arrange(-total) %>%
+  top_n(3) %>%
+  pull(County)
+
+top_three_enrollment_values <- vac_2017 %>%
+  filter(Reported == "Y") %>% 
+  group_by(County) %>%
+  summarise(
+    total = sum(K_12_enrollment)
+  ) %>%
+  arrange(-total) %>%
+  top_n(3) %>%
+  pull(total)
+
+bottom_three_enrollment <- vac_2017 %>%
+  filter(Reported == "Y") %>% 
+  group_by(County) %>%
+  summarise(
+    total = sum(K_12_enrollment)
+  ) %>%
+  arrange(-total) %>%
+  top_n(-3) %>%
+  pull(County)
+
+bottom_three_enrollment_values <- vac_2017 %>%
+  filter(Reported == "Y") %>% 
+  group_by(County) %>%
+  summarise(
+    total = sum(K_12_enrollment)
+  ) %>%
+  arrange(-total) %>%
+  top_n(-3) %>%
+  pull(total)
+
+
+# bottom three vac percent 
+bottom_three_vac_perc <- vac_2017 %>%
+  filter(Reported == "Y") %>% 
+  group_by(County) %>%
+  summarise(
+    total = mean(Percent_complete_for_all_immunizations)
+  ) %>%
+  arrange(-total) %>%
+  top_n(-3) %>%
+  pull(County)
+
+bottom_three_vac_perc_values <- vac_2017 %>%
+  filter(Reported == "Y") %>% 
+  group_by(County) %>%
+  summarise(
+    total = mean(Percent_complete_for_all_immunizations)
+  ) %>%
+  arrange(-total) %>%
+  top_n(-3) %>%
+  pull(total)
