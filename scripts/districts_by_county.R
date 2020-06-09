@@ -139,8 +139,9 @@ county_maps$bins <- cut(
   
 county_plot <- ggplot(county_maps) + 
     geom_polygon(aes(x = long, y = lat, group = group, fill = bins), colour = "black") +
-  scale_fill_brewer(palette = "Blues") +
+  scale_fill_brewer(palette = "YlOrRd") +
   coord_quickmap() +
   labs(title = " % Immunizations by County 2017", fill = "Immunization Percentage") +
   theme_void()
 
+county_plot
